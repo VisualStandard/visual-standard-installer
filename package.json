@@ -1,0 +1,55 @@
+{
+  "name": "@visualstandard/install",
+  "version": "1.0.6",
+  "description": "Auditable installer for Visual Standard Motion Graphics Creator.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Visual Standard",
+  "homepage": "https://visualstandard.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VisualStandard/visual-standard-installer.git"
+  },
+  "documentation": "https://github.com/VisualStandard/visual-standard-installer/tree/main/docs",
+  "bugs": {
+    "url": "https://github.com/VisualStandard/visual-standard-installer/issues"
+  },
+  "security": "https://github.com/VisualStandard/visual-standard-installer/security/policy",
+  "keywords": [
+    "motion-graphics",
+    "claude-code",
+    "remotion",
+    "video",
+    "visual-standard"
+  ],
+  "type": "module",
+  "bin": {
+    "visualstandard-install": "bin/install.mjs"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "bin/install.mjs",
+    "config.json",
+    "entitlement-public-keys.json",
+    "src/api.mjs",
+    "src/config.mjs",
+    "src/download.mjs",
+    "src/entitlement.mjs",
+    "src/identity.mjs",
+    "src/installer.mjs",
+    "src/license-input.mjs",
+    "src/private-launcher.mjs"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "os": [
+    "darwin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
