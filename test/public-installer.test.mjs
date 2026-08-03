@@ -119,7 +119,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false }
         issuedAt: now,
         release: {
           version: "1.0.3",
-          minimumInstallerVersion: "1.0.9",
+          minimumInstallerVersion: "1.0.10",
           channel: "stable",
           sha256: privateRelease.sha256,
           sizeBytes: privateRelease.sizeBytes,
@@ -144,7 +144,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false }
     installationId,
     config: {
       contractVersion: 1,
-      installerVersion: "1.0.9",
+      installerVersion: "1.0.10",
       apiBaseUrl: "https://api.visualstandard.test",
       releaseChannel: "stable",
       privateEntrypoint: "package/installer-entry.mjs",
@@ -271,7 +271,7 @@ test("public repository and packed npm archive contain no retired identity, secr
   assert.doesNotMatch(listing.stdout, /runtime|buyer-agent|reference|prompts|entitlement\.json/i);
   assert.doesNotMatch(contents.stdout, /BEGIN (?:OPENSSH |RSA |EC |ENCRYPTED )?PRIVATE KEY|sk_live_|sk_test_|whsec_|SUPABASE_SERVICE_ROLE|STRIPE_SECRET_KEY|VS1-[A-Z0-9]{12,}/i);
   const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
-  assert.equal(manifest.version, "1.0.9");
+  assert.equal(manifest.version, "1.0.10");
   assert.equal(manifest.homepage, "https://visualstandard.io");
   assert.equal(manifest.repository.url, "git+https://github.com/VisualStandard/visual-standard-installer.git");
   assert.equal(manifest.documentation, "https://github.com/VisualStandard/visual-standard-installer/tree/main/docs");
