@@ -1,6 +1,9 @@
 name: Publish audited installer
 
 on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -23,9 +26,15 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Update npm for trusted publishing
-        run: npm install --global npm@latest
+        run: npm install --global npm@11.16.0
+
+      - name: Report release toolchain
+        run: |
+          node --version
+          npm --version
 
       - name: Verify release tag matches package version
+        if: github.event_name == 'release'
         shell: bash
         run: |
           VERSION="$(node -p "require('./package.json').version")"
@@ -38,4 +47,5 @@ jobs:
         run: npm pack --dry-run --force
 
       - name: Publish acceptance candidate with provenance
+        if: github.event_name == 'release'
         run: npm publish --access public --tag acceptance --provenance

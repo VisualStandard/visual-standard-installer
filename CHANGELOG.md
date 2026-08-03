@@ -3,6 +3,11 @@
 All notable public-installer changes are recorded here. This file covers the thin
 public installer only; it does not disclose or describe the private creative runtime.
 
+## 1.0.10 (release candidate)
+
+- Keeps installer behavior unchanged.
+- Pins the verified npm release toolchain and validates every release change before tagging.
+
 ## 1.0.9 (release candidate)
 
 - Keeps installer behavior unchanged.

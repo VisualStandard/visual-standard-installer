@@ -1,6 +1,6 @@
 {
   "name": "@visualstandard/install",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Auditable installer for Visual Standard Motion Graphics Creator.",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Visual Standard <support@visualstandard.io>",
