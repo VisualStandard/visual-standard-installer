@@ -1,6 +1,11 @@
 # Package provenance
 
-## Release 1.0.6
+## Release candidate 1.0.7
+
+Version 1.0.7 is the coordinated production candidate for the official
+`https://visualstandard.io` service and the `stable` release channel. It must be
+published under the `acceptance` npm tag first. It is promoted unchanged to
+`latest` only after the clean-Mac buyer acceptance passes.
 
 The repository and published npm package contain only the public Visual Standard installer
 wrapper. The wrapper:
