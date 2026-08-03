@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "Auditable installer for Visual Standard Motion Graphics Creator.",
   "license": "SEE LICENSE IN LICENSE",
-  "author": "Visual Standard",
+  "author": "Visual Standard <support@visualstandard.io>",
   "homepage": "https://visualstandard.io",
   "repository": {
     "type": "git",
