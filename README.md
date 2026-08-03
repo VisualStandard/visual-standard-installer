@@ -6,16 +6,16 @@ and optional voiceover into an editable motion-graphics project in Claude Code.
 > **Platform support:** macOS only. Node.js 20+ and Claude Code are required.
 
 - Official website: https://visualstandard.io
-- Installation: [docs/INSTALL.md](docs/INSTALL.md)
-- Uninstallation: [docs/UNINSTALL.md](docs/UNINSTALL.md)
-- Troubleshooting: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
-- Support: [SUPPORT.md](SUPPORT.md)
-- Versioning and releases: [VERSIONING.md](VERSIONING.md)
-- Release history: [CHANGELOG.md](CHANGELOG.md)
-- Security policy: [SECURITY.md](SECURITY.md)
-- Published-package provenance: [PROVENANCE.md](PROVENANCE.md)
-- Public/private boundary: [docs/PUBLIC_PRIVATE_BOUNDARY.md](docs/PUBLIC_PRIVATE_BOUNDARY.md)
-- Published tarball checksum: [CHECKSUMS.sha256](CHECKSUMS.sha256)
+- Installation: [official installation guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/INSTALL.md)
+- Uninstallation: [official uninstallation guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/UNINSTALL.md)
+- Troubleshooting: [official troubleshooting guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/TROUBLESHOOTING.md)
+- Support: [support policy](https://github.com/VisualStandard/visual-standard-installer/blob/main/SUPPORT.md)
+- Versioning and releases: [versioning policy](https://github.com/VisualStandard/visual-standard-installer/blob/main/VERSIONING.md)
+- Release history: [changelog](https://github.com/VisualStandard/visual-standard-installer/blob/main/CHANGELOG.md)
+- Security policy: [security policy](https://github.com/VisualStandard/visual-standard-installer/blob/main/SECURITY.md)
+- Published-package provenance: [provenance record](https://github.com/VisualStandard/visual-standard-installer/blob/main/PROVENANCE.md)
+- Public/private boundary: [boundary documentation](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/PUBLIC_PRIVATE_BOUNDARY.md)
+- Published tarball checksum: [release checksums](https://github.com/VisualStandard/visual-standard-installer/blob/main/CHECKSUMS.sha256)
 - License terms: https://visualstandard.io/license
 
 ## Requirements
