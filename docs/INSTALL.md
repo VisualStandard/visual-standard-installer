@@ -8,11 +8,10 @@ This installer supports **macOS only**.
 2. Wait for the purchase email containing your Visual Standard license key.
 3. Confirm that Node.js 20+ and Claude Code are installed and that Claude Code is signed in.
 4. Open Claude Code and paste `npx @visualstandard/install`.
-5. Review and approve the command when Claude Code asks for permission.
-6. Enter the license key only in the installer's hidden license prompt.
-7. Wait for installation and diagnostics to finish.
-8. Start a new Claude Code session if the new command is not immediately visible.
-9. Run `/visual-create` and provide a script plus an optional voiceover.
+5. Enter the license key only in the installer's hidden license prompt.
+6. Wait for installation and diagnostics to finish.
+7. Start a new Claude Code session if the new command is not immediately visible.
+8. Run `/visual-create` and provide a script plus an optional voiceover.
 
 The success page and purchase email should always show the same command. The
 license key must never be appended to the command.
@@ -50,11 +49,10 @@ The installer requests the license key through a secure terminal prompt or hidde
 macOS dialog. Do not place a license key in a command, chat message, shell history,
 environment file, issue, or support ticket.
 
-Claude Code may not recognize a recently published package immediately. It may ask
-where the command came from or request permission to inspect the npm package. This
-is expected. Confirm that the package is `@visualstandard/install`, the repository
-belongs to the `VisualStandard` GitHub organization, and the website is
-`visualstandard.io` before approving it.
+The official public identity is `@visualstandard/install` on npm,
+`VisualStandard/visual-standard-installer` on GitHub, and `visualstandard.io` on
+the web. The package is dependency-free, has no npm lifecycle scripts, and its
+reviewed source is public in that repository.
 
 The default public runtime location is:
 

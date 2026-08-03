@@ -27,16 +27,11 @@ and optional voiceover into an editable motion-graphics project in Claude Code.
 
 ## Install
 
-Open Claude Code and ask it to run:
+Open Claude Code and paste:
 
 ```bash
 npx @visualstandard/install
 ```
-
-Claude Code may ask you to approve the command because it downloads a public npm
-package. Review the official package and repository links above, then approve it
-only if they match `@visualstandard/install` and the `VisualStandard` GitHub
-organization.
 
 The installer securely asks for the license key delivered after purchase. It then:
 
@@ -46,6 +41,22 @@ The installer securely asks for the license key delivered after purchase. It the
 4. delegates installation and diagnostics to the authorized private installer.
 
 The license key is not printed in the command or stored in this npm package.
+
+## Verify the official installer
+
+The public release has one consistent identity:
+
+- npm package: `@visualstandard/install`;
+- GitHub organization: `VisualStandard`;
+- source repository: `VisualStandard/visual-standard-installer`;
+- official website: `visualstandard.io`;
+- product: Visual Standard Motion Graphics Creator;
+- supported platform: macOS.
+
+The package is dependency-free, defines no npm lifecycle scripts, and exposes one
+installer binary. Its reviewed source is this public repository. Installation
+writes only to the documented Visual Standard runtime location and the Visual
+Standard skill and command locations used by Claude Code.
 
 ## Security and package contents
 
