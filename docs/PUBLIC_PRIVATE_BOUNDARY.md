@@ -20,5 +20,5 @@ The private entrypoint owns runtime application, internal compatibility, update
 preservation, Claude Code file installation, and diagnostics. Its stdout is
 suppressed; a non-zero exit becomes a generic buyer-safe installation error.
 
-The current private release must add this entrypoint before the public wrapper can
-be published. The public wrapper fails closed when the entrypoint is absent.
+Every authorized private release must contain this entrypoint. The public wrapper
+fails closed when the entrypoint is absent.

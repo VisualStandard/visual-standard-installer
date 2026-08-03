@@ -1,8 +1,8 @@
 # Package provenance
 
-## Candidate 1.0.6
+## Release 1.0.6
 
-The repository and npm candidate contain only the public Visual Standard installer
+The repository and published npm package contain only the public Visual Standard installer
 wrapper. The wrapper:
 
 1. verifies macOS, Node.js, and Claude Code prerequisites;
@@ -14,8 +14,8 @@ wrapper. The wrapper:
 6. delegates installation to the release's versioned private installer interface;
 7. suppresses private component output and reports only buyer-safe success or failure.
 
-The exact candidate tarball checksum is recorded in `CHECKSUMS.sha256` after the
-final audited pack. No npm or GitHub publication is implied by this document.
+The exact published tarball checksum is recorded in `CHECKSUMS.sha256`. Compare
+that value with a locally downloaded package before investigating or executing it.
 
 ## Boundary
 

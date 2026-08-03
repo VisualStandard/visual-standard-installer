@@ -5,8 +5,7 @@
 Do not open a public issue for a vulnerability, license value, entitlement token,
 signed download URL, customer file, or credential.
 
-After this repository is published, use GitHub's private vulnerability-reporting
-flow:
+Use GitHub's private vulnerability-reporting flow:
 
 `https://github.com/VisualStandard/visual-standard-installer/security/advisories/new`
 
@@ -19,5 +18,6 @@ General bugs that do not contain security-sensitive information may be reported 
 
 `https://github.com/VisualStandard/visual-standard-installer/issues`
 
-No security email address is declared here until Visual Standard approves a public
-address on the `visualstandard.io` domain.
+Purchase, billing, and license-delivery questions are not security reports. Use
+the customer-support route published on the official Visual Standard website.
+Never include a complete license key in a GitHub issue or vulnerability report.
