@@ -3,6 +3,13 @@
 All notable public-installer changes are recorded here. This file covers the thin
 public installer only; it does not disclose or describe the private creative runtime.
 
+## 1.0.7 (release candidate)
+
+- Targets the official `visualstandard.io` commercial service.
+- Uses the public `stable` release channel.
+- Publishes through GitHub Actions with npm provenance under the `acceptance` tag.
+- Keeps the installer dependency-free and free of lifecycle scripts.
+
 ## 1.0.6
 
 - Published the auditable Visual Standard installer repository.

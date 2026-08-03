@@ -1,9 +1,9 @@
 {
   "name": "@visualstandard/install",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Auditable installer for Visual Standard Motion Graphics Creator.",
   "license": "SEE LICENSE IN LICENSE",
-  "author": "Visual Standard",
+  "author": "Visual Standard <support@visualstandard.io>",
   "homepage": "https://visualstandard.io",
   "repository": {
     "type": "git",
@@ -28,6 +28,15 @@
   "files": [
     "README.md",
     "LICENSE",
+    "CHANGELOG.md",
+    "PROVENANCE.md",
+    "SECURITY.md",
+    "SUPPORT.md",
+    "VERSIONING.md",
+    "docs/INSTALL.md",
+    "docs/PUBLIC_PRIVATE_BOUNDARY.md",
+    "docs/TROUBLESHOOTING.md",
+    "docs/UNINSTALL.md",
     "bin/install.mjs",
     "config.json",
     "entitlement-public-keys.json",
@@ -47,7 +56,9 @@
     "darwin"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true,
+    "tag": "acceptance"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs"

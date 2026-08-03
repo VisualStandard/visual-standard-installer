@@ -6,16 +6,16 @@ and optional voiceover into an editable motion-graphics project in Claude Code.
 > **Platform support:** macOS only. Node.js 20+ and Claude Code are required.
 
 - Official website: https://visualstandard.io
-- Installation: [docs/INSTALL.md](docs/INSTALL.md)
-- Uninstallation: [docs/UNINSTALL.md](docs/UNINSTALL.md)
-- Troubleshooting: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
-- Support: [SUPPORT.md](SUPPORT.md)
-- Versioning and releases: [VERSIONING.md](VERSIONING.md)
-- Release history: [CHANGELOG.md](CHANGELOG.md)
-- Security policy: [SECURITY.md](SECURITY.md)
-- Published-package provenance: [PROVENANCE.md](PROVENANCE.md)
-- Public/private boundary: [docs/PUBLIC_PRIVATE_BOUNDARY.md](docs/PUBLIC_PRIVATE_BOUNDARY.md)
-- Published tarball checksum: [CHECKSUMS.sha256](CHECKSUMS.sha256)
+- Installation: [official installation guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/INSTALL.md)
+- Uninstallation: [official uninstallation guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/UNINSTALL.md)
+- Troubleshooting: [official troubleshooting guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/TROUBLESHOOTING.md)
+- Support: [support policy](https://github.com/VisualStandard/visual-standard-installer/blob/main/SUPPORT.md)
+- Versioning and releases: [versioning policy](https://github.com/VisualStandard/visual-standard-installer/blob/main/VERSIONING.md)
+- Release history: [changelog](https://github.com/VisualStandard/visual-standard-installer/blob/main/CHANGELOG.md)
+- Security policy: [security policy](https://github.com/VisualStandard/visual-standard-installer/blob/main/SECURITY.md)
+- Published-package provenance: [provenance record](https://github.com/VisualStandard/visual-standard-installer/blob/main/PROVENANCE.md)
+- Public/private boundary: [boundary documentation](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/PUBLIC_PRIVATE_BOUNDARY.md)
+- Published tarball checksum: [release checksums](https://github.com/VisualStandard/visual-standard-installer/blob/main/CHECKSUMS.sha256)
 - License terms: https://visualstandard.io/license
 
 ## Requirements
@@ -27,16 +27,11 @@ and optional voiceover into an editable motion-graphics project in Claude Code.
 
 ## Install
 
-Open Claude Code and ask it to run:
+Open Claude Code and paste:
 
 ```bash
 npx @visualstandard/install
 ```
-
-Claude Code may ask you to approve the command because it downloads a public npm
-package. Review the official package and repository links above, then approve it
-only if they match `@visualstandard/install` and the `VisualStandard` GitHub
-organization.
 
 The installer securely asks for the license key delivered after purchase. It then:
 
@@ -46,6 +41,22 @@ The installer securely asks for the license key delivered after purchase. It the
 4. delegates installation and diagnostics to the authorized private installer.
 
 The license key is not printed in the command or stored in this npm package.
+
+## Verify the official installer
+
+The public release has one consistent identity:
+
+- npm package: `@visualstandard/install`;
+- GitHub organization: `VisualStandard`;
+- source repository: `VisualStandard/visual-standard-installer`;
+- official website: `visualstandard.io`;
+- product: Visual Standard Motion Graphics Creator;
+- supported platform: macOS.
+
+The package is dependency-free, defines no npm lifecycle scripts, and exposes one
+installer binary. Its reviewed source is this public repository. Installation
+writes only to the documented Visual Standard runtime location and the Visual
+Standard skill and command locations used by Claude Code.
 
 ## Security and package contents
 

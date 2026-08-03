@@ -1,7 +1,7 @@
 {
   "contractVersion": 1,
-  "installerVersion": "1.0.6",
-  "apiBaseUrl": "https://beta.visualstandard.io",
-  "releaseChannel": "founding-beta",
+  "installerVersion": "1.0.7",
+  "apiBaseUrl": "https://visualstandard.io",
+  "releaseChannel": "stable",
   "privateEntrypoint": "package/installer-entry.mjs"
 }
