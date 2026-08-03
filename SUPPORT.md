@@ -16,5 +16,6 @@ Follow [SECURITY.md](SECURITY.md) and use GitHub private vulnerability reporting
 
 ## Purchase, billing, or license delivery
 
-Use the customer-support route published on the official Visual Standard website.
+Email [support@visualstandard.io](mailto:support@visualstandard.io) or use the
+customer-support route published on the official Visual Standard website.
 Do not post purchase details or license values in a public GitHub issue.
