@@ -3,6 +3,11 @@
 All notable public-installer changes are recorded here. This file covers the thin
 public installer only; it does not disclose or describe the private creative runtime.
 
+## 1.0.8 (release candidate)
+
+- Keeps the 1.0.7 installer behavior unchanged.
+- Makes the public archive audit compatible with current npm output in GitHub Actions.
+
 ## 1.0.7 (release candidate)
 
 - Targets the official `visualstandard.io` commercial service.
