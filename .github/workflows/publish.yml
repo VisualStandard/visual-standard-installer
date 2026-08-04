@@ -46,6 +46,6 @@ jobs:
       - name: Verify package contents
         run: npm pack --dry-run --force
 
-      - name: Publish acceptance candidate with provenance
+      - name: Publish production release with provenance
         if: github.event_name == 'release'
-        run: npm publish --access public --tag acceptance --provenance
+        run: npm publish --access public --tag latest --provenance

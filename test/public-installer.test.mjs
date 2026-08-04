@@ -15,6 +15,8 @@ import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { activateLicense } from "../src/api.mjs";
+import { INSTALLER_VERSION, loadConfig } from "../src/config.mjs";
 import { install } from "../src/installer.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -24,7 +26,11 @@ const retiredName = ["n", "a", "a", "d"].join("");
 const retiredState = `.${retiredName}`;
 const retiredEnvironment = `${retiredName.toUpperCase()}_`;
 const retiredCommand = `${retiredName}-`;
-const forbidden = [retiredName, retiredState, retiredEnvironment, retiredCommand];
+const retiredStageLabels = [
+  ["b", "e", "t", "a"].join(""),
+  ["a", "c", "c", "e", "p", "t", "a", "n", "c", "e"].join(""),
+];
+const forbidden = [retiredName, retiredState, retiredEnvironment, retiredCommand, ...retiredStageLabels];
 const testLicense = ["VS1", "TEST", "LICENSE", "NOT", "REAL"].join("-");
 
 const collect = (directory) => readdirSync(directory).flatMap((name) => {
@@ -119,7 +125,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false }
         issuedAt: now,
         release: {
           version: "1.0.3",
-          minimumInstallerVersion: "1.0.10",
+          minimumInstallerVersion: INSTALLER_VERSION,
           channel: "stable",
           sha256: privateRelease.sha256,
           sizeBytes: privateRelease.sizeBytes,
@@ -144,7 +150,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false }
     installationId,
     config: {
       contractVersion: 1,
-      installerVersion: "1.0.10",
+      installerVersion: INSTALLER_VERSION,
       apiBaseUrl: "https://api.visualstandard.test",
       releaseChannel: "stable",
       privateEntrypoint: "package/installer-entry.mjs",
@@ -190,6 +196,16 @@ test("clean install activates, verifies, downloads, delegates privately, and ins
   for (const value of forbidden) assert.equal(output.toLowerCase().includes(value.toLowerCase()), false);
 });
 
+test("the npm patch keeps the audited stable installer protocol boundary", () => {
+  const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  const config = loadConfig();
+  assert.equal(manifest.version, "1.0.11");
+  assert.equal(config.installerVersion, "1.0.7");
+  assert.equal(config.apiBaseUrl, "https://visualstandard.io");
+  assert.equal(config.releaseChannel, "stable");
+  assert.equal(config.privateEntrypoint, "package/installer-entry.mjs");
+});
+
 test("invalid entitlement signature stops before authorization or download", async () => {
   const home = mkdtempSync(join(tmpdir(), "visual-standard-signature-"));
   const scenario = fixture(home, { invalidSignature: true });
@@ -232,6 +248,43 @@ test("private diagnostics are suppressed and converted to buyer-safe output", as
   });
 });
 
+test("every commercial API failure has bounded buyer-safe guidance", async () => {
+  const expected = new Map([
+    ["invalid_request", /current Visual Standard installer/i],
+    ["license_invalid", /license key is invalid/i],
+    ["license_revoked", /contact support/i],
+    ["activation_limit_reached", /two Macs/i],
+    ["entitlement_invalid", /activate again/i],
+    ["entitlement_expired", /enter the license key again/i],
+    ["entitlement_revoked", /contact support/i],
+    ["device_inactive", /Mac is not active/i],
+    ["channel_not_allowed", /license channel/i],
+    ["rollback_not_allowed", /rollback is not authorized/i],
+    ["release_not_available", /no eligible Visual Standard/i],
+    ["idempotency_conflict", /run the installer again/i],
+    ["installer_update_required", /@visualstandard\/install@latest/i],
+    ["rate_limited", /wait and try again/i],
+    ["release_storage_unavailable", /temporarily unavailable/i],
+  ]);
+  for (const [code, message] of expected) {
+    await assert.rejects(() => activateLicense({
+      config: { apiBaseUrl: "https://api.visualstandard.test", releaseChannel: "stable" },
+      licenseKey: testLicense,
+      installationId: "A".repeat(43),
+      fetchImpl: async () => new Response(JSON.stringify({ code }), {
+        status: code === "rate_limited" ? 429 : 400,
+        headers: code === "rate_limited" ? { "Retry-After": "60" } : {},
+      }),
+    }), (error) => {
+      assert.equal(error.code, code);
+      assert.match(error.message, message);
+      assert.equal(error.retryAfter, code === "rate_limited" ? "60" : null);
+      for (const value of forbidden) assert.equal(error.message.toLowerCase().includes(value.toLowerCase()), false);
+      return true;
+    });
+  }
+});
+
 test("public repository and packed npm archive contain no retired identity, secrets, or private runtime", () => {
   for (const file of collect(root)) {
     const bytes = readFileSync(file);
@@ -271,7 +324,7 @@ test("public repository and packed npm archive contain no retired identity, secr
   assert.doesNotMatch(listing.stdout, /runtime|buyer-agent|reference|prompts|entitlement\.json/i);
   assert.doesNotMatch(contents.stdout, /BEGIN (?:OPENSSH |RSA |EC |ENCRYPTED )?PRIVATE KEY|sk_live_|sk_test_|whsec_|SUPABASE_SERVICE_ROLE|STRIPE_SECRET_KEY|VS1-[A-Z0-9]{12,}/i);
   const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
-  assert.equal(manifest.version, "1.0.10");
+  assert.equal(manifest.version, "1.0.11");
   assert.equal(manifest.homepage, "https://visualstandard.io");
   assert.equal(manifest.repository.url, "git+https://github.com/VisualStandard/visual-standard-installer.git");
   assert.equal(manifest.documentation, "https://github.com/VisualStandard/visual-standard-installer/tree/main/docs");
