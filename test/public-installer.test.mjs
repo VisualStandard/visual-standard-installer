@@ -32,6 +32,7 @@ const retiredStageLabels = [
 ];
 const forbidden = [retiredName, retiredState, retiredEnvironment, retiredCommand, ...retiredStageLabels];
 const testLicense = ["VS1", "TEST", "LICENSE", "NOT", "REAL"].join("-");
+const productCode = "motion_graphics_creator";
 
 const collect = (directory) => readdirSync(directory).flatMap((name) => {
   const entry = join(directory, name);
@@ -39,12 +40,13 @@ const collect = (directory) => readdirSync(directory).flatMap((name) => {
   return statSync(entry).isDirectory() ? collect(entry) : [entry];
 });
 
-const createToken = ({ installationId, channel = "stable", privateKey }) => {
+const createToken = ({ installationId, channel = "stable", privateKey, tokenProductCode = productCode }) => {
   const header = Buffer.from(JSON.stringify({ alg: "Ed25519", kid: "test-key" })).toString("base64url");
   const payload = Buffer.from(JSON.stringify({
     licenseId: "license-test",
     deviceId: installationId,
     channel,
+    productCode: tokenProductCode,
     issuedAt: now - 10,
     expiresAt: now + 3600,
     contractVersion: 1,
@@ -89,13 +91,14 @@ writeFileSync(join(skill, "SKILL.md"), "# Visual Standard Motion Graphics Creato
   };
 };
 
-const fixture = (directory, { invalidSignature = false, privateFailure = false } = {}) => {
+const fixture = (directory, { invalidSignature = false, privateFailure = false, wrongProductCode = false } = {}) => {
   const installationId = "A".repeat(43);
   const signing = generateKeyPairSync("ed25519");
   const other = generateKeyPairSync("ed25519");
   const token = createToken({
     installationId,
     privateKey: invalidSignature ? other.privateKey : signing.privateKey,
+    tokenProductCode: wrongProductCode ? "another_product" : productCode,
   });
   const keyringFile = join(directory, "keyring.json");
   writeFileSync(keyringFile, `${JSON.stringify({
@@ -152,6 +155,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false }
       contractVersion: 1,
       installerVersion: INSTALLER_VERSION,
       apiBaseUrl: "https://api.visualstandard.test",
+      productCode,
       releaseChannel: "stable",
       privateEntrypoint: "package/installer-entry.mjs",
       keyringFile,
@@ -202,8 +206,19 @@ test("the npm patch keeps the audited stable installer protocol boundary", () =>
   assert.equal(manifest.version, "1.0.11");
   assert.equal(config.installerVersion, "1.0.7");
   assert.equal(config.apiBaseUrl, "https://visualstandard.io");
+  assert.equal(config.productCode, productCode);
   assert.equal(config.releaseChannel, "stable");
   assert.equal(config.privateEntrypoint, "package/installer-entry.mjs");
+});
+
+test("buyer instructions install from Terminal before opening Claude Code", () => {
+  const readme = readFileSync(join(root, "README.md"), "utf8");
+  const installGuide = readFileSync(join(root, "docs", "INSTALL.md"), "utf8");
+  const instructions = `${readme}\n${installGuide}`;
+  assert.match(instructions, /Terminal/);
+  assert.match(instructions, /npx @visualstandard\/install/);
+  assert.match(instructions, /Do not paste (?:this|the installer) command into Claude Code/);
+  assert.doesNotMatch(instructions, /Open Claude Code and paste/);
 });
 
 test("invalid entitlement signature stops before authorization or download", async () => {
@@ -224,6 +239,25 @@ test("invalid entitlement signature stops before authorization or download", asy
   }), /signature is invalid/i);
   assert.equal(scenario.calls.length, 1);
   assert.equal(existsSync(join(home, ".visual-standard", "motion-graphics-creator")), false);
+});
+
+test("an entitlement for another product stops before authorization or download", async () => {
+  const home = mkdtempSync(join(tmpdir(), "visual-standard-product-"));
+  const scenario = fixture(home, { wrongProductCode: true });
+  const stateDirectory = join(home, ".visual-standard", "installer-state");
+  mkdirSync(stateDirectory, { recursive: true, mode: 0o700 });
+  writeFileSync(join(stateDirectory, "installation-id"), `${scenario.installationId}\n`, { mode: 0o600 });
+  await assert.rejects(() => install({
+    home,
+    platform: "darwin",
+    now,
+    fetchImpl: scenario.fetchImpl,
+    checkEnvironmentImpl: () => {},
+    loadConfigImpl: () => scenario.config,
+    readLicenseKeyImpl: () => testLicense,
+    log: () => {},
+  }), /not valid for this installation/i);
+  assert.equal(scenario.calls.length, 1);
 });
 
 test("private diagnostics are suppressed and converted to buyer-safe output", async () => {

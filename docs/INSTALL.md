@@ -7,7 +7,7 @@ This installer supports **macOS only**.
 1. Complete the purchase through the official Visual Standard website.
 2. Wait for the purchase email containing your Visual Standard license key.
 3. Confirm that Node.js 20+ and Claude Code are installed and that Claude Code is signed in.
-4. Open Claude Code and paste `npx @visualstandard/install`.
+4. Open the macOS Terminal app and run `npx @visualstandard/install`.
 5. Enter the license key only in the installer's hidden license prompt.
 6. Wait for installation and diagnostics to finish.
 7. Start a new Claude Code session if the new command is not immediately visible.
@@ -39,7 +39,7 @@ credentials.
 
 ## Install
 
-Open Claude Code and paste:
+Open the macOS **Terminal** app and run:
 
 ```bash
 npx @visualstandard/install
@@ -73,6 +73,7 @@ The installed public commands are `/visual-create`, `/visual-resume`,
 `/visual-atelier`, and `/visual-market`. The installed skill is
 `motion-graphics-creator`.
 
-If installation stops or Claude Code refuses to run the package, use the
+Do not paste the installer command into Claude Code. Claude Code is used only
+after installation, starting with `/visual-create`. If installation stops, use the
 [troubleshooting guide](TROUBLESHOOTING.md). Do not keep retrying with different
 commands or expose the license key while troubleshooting.

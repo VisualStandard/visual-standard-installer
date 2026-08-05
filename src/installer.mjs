@@ -49,6 +49,7 @@ export const install = async ({
     keyring: loadKeyring(config.keyringFile),
     expectedChannel: config.releaseChannel,
     expectedDeviceId: installationId,
+    expectedProductCode: config.productCode,
     now,
   });
   if (activation.expiresAt !== entitlement.expiresAt) throw new Error("The activation response could not be verified.");

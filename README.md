@@ -27,13 +27,14 @@ and optional voiceover into an editable motion-graphics project in Claude Code.
 
 ## Install
 
-Open Claude Code and paste:
+Open the macOS **Terminal** app and run:
 
 ```bash
 npx @visualstandard/install
 ```
 
-The installer securely asks for the license key delivered after purchase. It then:
+Do not paste this command into Claude Code. The installer securely asks for the
+license key delivered after purchase. It then:
 
 1. activates the current Mac with Visual Standard Motion Graphics Creator;
 2. requests an authorized runtime download;
