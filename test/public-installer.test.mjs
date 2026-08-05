@@ -211,6 +211,22 @@ test("the npm patch keeps the audited stable installer protocol boundary", () =>
   assert.equal(config.privateEntrypoint, "package/installer-entry.mjs");
 });
 
+test("the hidden test channel can override public service identifiers explicitly", () => {
+  const internalStage = ["b", "e", "t", "a"].join("");
+  const internalProductCode = ["founding", internalStage].join("_");
+  const internalReleaseChannel = ["founding", internalStage].join("-");
+  const config = loadConfig({
+    env: {
+      VISUAL_STANDARD_API_BASE_URL: `https://${internalStage}.visualstandard.io`,
+      VISUAL_STANDARD_PRODUCT_CODE: internalProductCode,
+      VISUAL_STANDARD_RELEASE_CHANNEL: internalReleaseChannel,
+    },
+  });
+  assert.equal(config.apiBaseUrl, `https://${internalStage}.visualstandard.io`);
+  assert.equal(config.productCode, internalProductCode);
+  assert.equal(config.releaseChannel, internalReleaseChannel);
+});
+
 test("buyer instructions install from Terminal before opening Claude Code", () => {
   const readme = readFileSync(join(root, "README.md"), "utf8");
   const installGuide = readFileSync(join(root, "docs", "INSTALL.md"), "utf8");

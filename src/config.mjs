@@ -34,11 +34,12 @@ export const loadConfig = ({
     throw new Error("The Visual Standard installer configuration is unavailable.");
   }
   const apiBaseUrl = env.VISUAL_STANDARD_API_BASE_URL ?? stored.apiBaseUrl;
+  const productCode = env.VISUAL_STANDARD_PRODUCT_CODE ?? stored.productCode;
   const releaseChannel = env.VISUAL_STANDARD_RELEASE_CHANNEL ?? stored.releaseChannel;
   if (stored.contractVersion !== CONTRACT_VERSION || stored.installerVersion !== INSTALLER_VERSION) {
     throw new Error("The Visual Standard installer configuration is incompatible.");
   }
-  if (typeof stored.productCode !== "string" || !/^[a-z0-9][a-z0-9_]{1,62}$/.test(stored.productCode)) {
+  if (typeof productCode !== "string" || !/^[a-z0-9][a-z0-9_]{1,62}$/.test(productCode)) {
     throw new Error("The Visual Standard product configuration is invalid.");
   }
   if (typeof releaseChannel !== "string" || !/^[a-z0-9][a-z0-9-]{1,62}$/.test(releaseChannel)) {
@@ -51,7 +52,7 @@ export const loadConfig = ({
     contractVersion: CONTRACT_VERSION,
     installerVersion: INSTALLER_VERSION,
     apiBaseUrl: requireHttpsUrl(apiBaseUrl, "Visual Standard service URL").href.replace(/\/$/, ""),
-    productCode: stored.productCode,
+    productCode,
     releaseChannel,
     privateEntrypoint: stored.privateEntrypoint,
     keyringFile: resolve(keyringFile),
