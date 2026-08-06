@@ -192,6 +192,13 @@ test("clean install activates, verifies, downloads, delegates privately, and ins
     "/v1/releases/authorize",
     "/release",
   ]);
+  assert.deepEqual(JSON.parse(scenario.calls[1].options.body), {
+    contractVersion: 1,
+    action: "install",
+    installerVersion: INSTALLER_VERSION,
+    installedVersion: null,
+    requestedVersion: null,
+  });
   assert.ok(existsSync(join(home, ".visual-standard", "motion-graphics-creator", "installation-verified.json")));
   assert.ok(existsSync(join(home, ".claude", "skills", "motion-graphics-creator", "SKILL.md")));
   for (const command of ["atelier", "create", "index", "market", "mono", "resume", "signal", "update"]) {

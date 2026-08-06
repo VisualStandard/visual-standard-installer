@@ -111,6 +111,7 @@ export const authorizeRelease = async ({
       contractVersion: CONTRACT_VERSION,
       action: "install",
       installerVersion: config.installerVersion,
+      installedVersion: null,
       requestedVersion: null,
     },
   });
