@@ -91,5 +91,5 @@ export const install = async ({
     rmSync(staging, { recursive: true, force: true });
   }
   log(`${PRODUCT} installed and verified.`);
-  log("Open Claude Code and run /visual-create.");
+  log("Quit and reopen the Claude app, open Code, start a Local session, and run /visual-create.");
 };

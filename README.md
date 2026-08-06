@@ -47,6 +47,10 @@ FFmpeg, Whisper, and the required speech model before reporting success.
 
 The license key is not printed in the command or stored in this npm package.
 
+After installation, quit and reopen the Claude app. Open **Code**, start a new
+**Local** session on the Mac where the product was installed, and run
+`/visual-create`. Cloud sessions cannot load personal skills installed on that Mac.
+
 ## Verify the official installer
 
 The public release has one consistent identity:

@@ -10,8 +10,9 @@ This installer supports **macOS only**.
 4. Open the macOS Terminal app and run `npx @visualstandard/install`.
 5. Enter the license key only in the installer's hidden license prompt.
 6. Wait for installation and diagnostics to finish.
-7. Start a new Code session in the Claude app.
-8. Run `/visual-create` and provide a script plus an optional voiceover.
+7. Quit and reopen the Claude app, then open **Code**.
+8. Start a new **Local** session on the Mac where the product was installed.
+9. Run `/visual-create` and provide a script plus an optional voiceover.
 
 The success page and purchase email should always show the same command. The
 license key must never be appended to the command.
@@ -66,7 +67,8 @@ The default public runtime location is:
 
 Use `VISUAL_STANDARD_HOME` only when a custom user-owned runtime location is needed.
 
-After installation, open the Claude app, start a new Code session, and run:
+After installation, quit and reopen the Claude app. Open **Code**, choose the
+**Local** environment, select a project folder, start the session, and run:
 
 ```text
 /visual-create
@@ -76,6 +78,10 @@ The installed public commands are `/visual-create`, `/visual-resume`,
 `/visual-update`, `/visual-signal`, `/visual-index`, `/visual-mono`,
 `/visual-atelier`, and `/visual-market`. The installed skill is
 `motion-graphics-creator`.
+
+The session must be Local. Cloud sessions do not read personal skills from the
+Mac's `~/.claude/skills` directory and therefore cannot run the locally installed
+motion-graphics runtime.
 
 Do not paste the installer command into Claude Code. Claude Code is used only
 after installation, starting with `/visual-create`. If installation stops, use the

@@ -211,6 +211,7 @@ test("clean install activates, verifies, downloads, delegates privately, and ins
   }
   const output = logs.join("\n");
   assert.match(output, /Visual Standard Motion Graphics Creator installed and verified/);
+  assert.match(output, /reopen the Claude app.*Local session.*\/visual-create/);
   for (const value of forbidden) assert.equal(output.toLowerCase().includes(value.toLowerCase()), false);
 });
 
@@ -267,6 +268,8 @@ test("buyer instructions install from Terminal before opening Claude Code", () =
   assert.match(instructions, /Terminal/);
   assert.match(instructions, /npx @visualstandard\/install/);
   assert.match(instructions, /Do not paste (?:this|the installer) command into Claude Code/);
+  assert.match(instructions, /Local/);
+  assert.match(instructions, /Cloud sessions/);
   assert.doesNotMatch(instructions, /Open Claude Code and paste/);
 });
 

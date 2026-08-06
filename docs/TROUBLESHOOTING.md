@@ -45,9 +45,10 @@ Do not modify local activation files manually.
 
 ## The command exists but `/visual-create` does not
 
-Finish installation, close the current Claude Code session, and open a new session.
-Then run `/visual-create`. If it is still absent, report the installer version and
-the final non-sensitive diagnostic message.
+Finish installation, quit and reopen the Claude app, open **Code**, and start a new
+**Local** session. Cloud sessions do not load personal skills installed on the Mac.
+Then run `/visual-create`. If it is still absent in a Local session, report the
+installer version and the final non-sensitive diagnostic message.
 
 ## Installation is interrupted
 
