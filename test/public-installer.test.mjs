@@ -56,7 +56,7 @@ const createToken = ({ installationId, channel = "stable", privateKey, tokenProd
   return `${header}.${payload}.${signature}`;
 };
 
-const createPrivateFixture = (directory, { fail = false } = {}) => {
+const createPrivateFixture = (directory, { fail = false, falseSuccess = false } = {}) => {
   const packageRoot = join(directory, "private-source", "package");
   mkdirSync(packageRoot, { recursive: true });
   const entrypoint = join(packageRoot, "installer-entry.mjs");
@@ -69,7 +69,10 @@ if (!handoff.entitlementToken || handoff.contractVersion !== 1) process.exit(2);
 ${fail ? `console.error(${JSON.stringify(privateDiagnostic)}); process.exit(9);` : ""}
 const runtime = process.env.VISUAL_STANDARD_RUNTIME_HOME;
 const home = dirname(dirname(runtime));
+${falseSuccess ? "process.exit(0);" : ""}
 mkdirSync(runtime, { recursive: true });
+mkdirSync(join(runtime, "alpha"), { recursive: true });
+writeFileSync(join(runtime, "alpha", "cli.mjs"), "// verified runtime entrypoint\\n");
 writeFileSync(join(runtime, "installation-verified.json"), JSON.stringify({ version: handoff.release.version }));
 const commands = join(home, ".claude", "commands");
 const skill = join(home, ".claude", "skills", "motion-graphics-creator");
@@ -92,7 +95,7 @@ writeFileSync(join(skill, "SKILL.md"), "# Visual Standard Motion Graphics Creato
   };
 };
 
-const fixture = (directory, { invalidSignature = false, privateFailure = false, wrongProductCode = false, wrongInstallationId = false } = {}) => {
+const fixture = (directory, { invalidSignature = false, privateFailure = false, privateFalseSuccess = false, wrongProductCode = false, wrongInstallationId = false } = {}) => {
   const installationId = "A".repeat(43);
   const signing = generateKeyPairSync("ed25519");
   const other = generateKeyPairSync("ed25519");
@@ -111,7 +114,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false, 
       publicKeySpkiBase64: signing.publicKey.export({ type: "spki", format: "der" }).toString("base64"),
     }],
   })}\n`);
-  const privateRelease = createPrivateFixture(directory, { fail: privateFailure });
+  const privateRelease = createPrivateFixture(directory, { fail: privateFailure, falseSuccess: privateFalseSuccess });
   const calls = [];
   const fetchImpl = async (url, options = {}) => {
     calls.push({ url: String(url), options });
@@ -343,6 +346,24 @@ test("private diagnostics are suppressed and converted to buyer-safe output", as
     for (const value of forbidden) assert.equal(error.message.toLowerCase().includes(value.toLowerCase()), false);
     return true;
   });
+});
+
+test("a private installer that exits zero without installing cannot report success", async () => {
+  const home = mkdtempSync(join(tmpdir(), "visual-standard-false-success-"));
+  const scenario = fixture(home, { privateFalseSuccess: true });
+  const stateDirectory = join(home, ".visual-standard", "installer-state");
+  mkdirSync(stateDirectory, { recursive: true, mode: 0o700 });
+  writeFileSync(join(stateDirectory, "installation-id"), `${scenario.installationId}\n`, { mode: 0o600 });
+  await assert.rejects(() => install({
+    home,
+    platform: "darwin",
+    now,
+    fetchImpl: scenario.fetchImpl,
+    checkEnvironmentImpl: () => {},
+    loadConfigImpl: () => scenario.config,
+    readLicenseKeyImpl: () => testLicense,
+    log: () => {},
+  }), /installation could not be verified/i);
 });
 
 test("every commercial API failure has bounded buyer-safe guidance", async () => {

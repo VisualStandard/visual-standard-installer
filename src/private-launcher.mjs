@@ -72,6 +72,10 @@ export const runPrivateInstaller = ({
       maxBuffer: 1024 * 1024,
     });
     if (result.status !== 0) throw new Error("Visual Standard Motion Graphics Creator could not be installed.");
+    const installedEntrypoint = join(runtimeHome, "alpha", "cli.mjs");
+    if (!existsSync(installedEntrypoint) || !lstatSync(installedEntrypoint).isFile()) {
+      throw new Error("Visual Standard Motion Graphics Creator installation could not be verified.");
+    }
   } finally {
     rmSync(handoffFile, { force: true });
   }
