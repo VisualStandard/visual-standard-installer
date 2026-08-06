@@ -40,11 +40,12 @@ const collect = (directory) => readdirSync(directory).flatMap((name) => {
   return statSync(entry).isDirectory() ? collect(entry) : [entry];
 });
 
-const createToken = ({ installationId, channel = "stable", privateKey, tokenProductCode = productCode }) => {
+const createToken = ({ installationId, channel = "stable", privateKey, tokenProductCode = productCode, tokenInstallationId = installationId }) => {
   const header = Buffer.from(JSON.stringify({ alg: "Ed25519", kid: "test-key" })).toString("base64url");
   const payload = Buffer.from(JSON.stringify({
-    licenseId: "license-test",
-    deviceId: installationId,
+    licenseId: "00000000-0000-4000-8000-000000000010",
+    deviceId: "00000000-0000-4000-8000-000000000020",
+    installationId: tokenInstallationId,
     channel,
     productCode: tokenProductCode,
     issuedAt: now - 10,
@@ -91,7 +92,7 @@ writeFileSync(join(skill, "SKILL.md"), "# Visual Standard Motion Graphics Creato
   };
 };
 
-const fixture = (directory, { invalidSignature = false, privateFailure = false, wrongProductCode = false } = {}) => {
+const fixture = (directory, { invalidSignature = false, privateFailure = false, wrongProductCode = false, wrongInstallationId = false } = {}) => {
   const installationId = "A".repeat(43);
   const signing = generateKeyPairSync("ed25519");
   const other = generateKeyPairSync("ed25519");
@@ -99,6 +100,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false, 
     installationId,
     privateKey: invalidSignature ? other.privateKey : signing.privateKey,
     tokenProductCode: wrongProductCode ? "another_product" : productCode,
+    tokenInstallationId: wrongInstallationId ? "B".repeat(43) : installationId,
   });
   const keyringFile = join(directory, "keyring.json");
   writeFileSync(keyringFile, `${JSON.stringify({
@@ -260,6 +262,25 @@ test("invalid entitlement signature stops before authorization or download", asy
 test("an entitlement for another product stops before authorization or download", async () => {
   const home = mkdtempSync(join(tmpdir(), "visual-standard-product-"));
   const scenario = fixture(home, { wrongProductCode: true });
+  const stateDirectory = join(home, ".visual-standard", "installer-state");
+  mkdirSync(stateDirectory, { recursive: true, mode: 0o700 });
+  writeFileSync(join(stateDirectory, "installation-id"), `${scenario.installationId}\n`, { mode: 0o600 });
+  await assert.rejects(() => install({
+    home,
+    platform: "darwin",
+    now,
+    fetchImpl: scenario.fetchImpl,
+    checkEnvironmentImpl: () => {},
+    loadConfigImpl: () => scenario.config,
+    readLicenseKeyImpl: () => testLicense,
+    log: () => {},
+  }), /not valid for this installation/i);
+  assert.equal(scenario.calls.length, 1);
+});
+
+test("an entitlement for another installation stops before authorization or download", async () => {
+  const home = mkdtempSync(join(tmpdir(), "visual-standard-installation-"));
+  const scenario = fixture(home, { wrongInstallationId: true });
   const stateDirectory = join(home, ".visual-standard", "installer-state");
   mkdirSync(stateDirectory, { recursive: true, mode: 0o700 });
   writeFileSync(join(stateDirectory, "installation-id"), `${scenario.installationId}\n`, { mode: 0o600 });

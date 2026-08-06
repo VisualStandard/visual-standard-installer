@@ -48,7 +48,7 @@ export const install = async ({
   const entitlement = verifyEntitlement(activation.entitlementToken, {
     keyring: loadKeyring(config.keyringFile),
     expectedChannel: config.releaseChannel,
-    expectedDeviceId: installationId,
+    expectedInstallationId: installationId,
     expectedProductCode: config.productCode,
     now,
   });
