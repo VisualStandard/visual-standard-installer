@@ -1,6 +1,6 @@
 import { createPublicKey, timingSafeEqual, verify as verifySignature } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { CONTRACT_VERSION, MAX_OFFLINE_SECONDS } from "./config.mjs";
+import { CLOCK_SKEW_SECONDS, CONTRACT_VERSION, MAX_OFFLINE_SECONDS } from "./config.mjs";
 
 const decode = (segment) => {
   if (typeof segment !== "string" || !/^[A-Za-z0-9_-]+$/.test(segment)) throw new Error("The authorization token is malformed.");
@@ -78,8 +78,6 @@ export const verifyEntitlement = (token, {
     payload.contractVersion !== CONTRACT_VERSION
     || !Number.isSafeInteger(payload.issuedAt)
     || !Number.isSafeInteger(payload.expiresAt)
-    || payload.issuedAt > now
-    || payload.expiresAt <= now
     || payload.expiresAt - payload.issuedAt > MAX_OFFLINE_SECONDS
     || !uuid.test(payload.licenseId)
     || !uuid.test(payload.deviceId)
@@ -91,6 +89,12 @@ export const verifyEntitlement = (token, {
     || !sameText(payload.productCode, expectedProductCode)
   ) {
     throw new Error("The authorization token is not valid for this installation.");
+  }
+  if (payload.issuedAt > now + CLOCK_SKEW_SECONDS) {
+    throw new Error("The Mac clock is not synchronized. Enable automatic date and time, then try again.");
+  }
+  if (payload.expiresAt <= now - CLOCK_SKEW_SECONDS) {
+    throw new Error("The authorization token has expired. Enter the license key again.");
   }
   return payload;
 };

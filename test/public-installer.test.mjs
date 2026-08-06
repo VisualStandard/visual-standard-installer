@@ -202,6 +202,25 @@ test("clean install activates, verifies, downloads, delegates privately, and ins
   for (const value of forbidden) assert.equal(output.toLowerCase().includes(value.toLowerCase()), false);
 });
 
+test("normal Mac and service clock skew does not block installation", async () => {
+  const home = mkdtempSync(join(tmpdir(), "visual-standard-clock-skew-"));
+  const scenario = fixture(home);
+  const stateDirectory = join(home, ".visual-standard", "installer-state");
+  mkdirSync(stateDirectory, { recursive: true, mode: 0o700 });
+  writeFileSync(join(stateDirectory, "installation-id"), `${scenario.installationId}\n`, { mode: 0o600 });
+  await install({
+    home,
+    platform: "darwin",
+    now: now - 120,
+    fetchImpl: scenario.fetchImpl,
+    checkEnvironmentImpl: () => {},
+    loadConfigImpl: () => scenario.config,
+    readLicenseKeyImpl: () => testLicense,
+    log: () => {},
+  });
+  assert.ok(existsSync(join(home, ".visual-standard", "motion-graphics-creator", "installation-verified.json")));
+});
+
 test("the npm patch keeps the audited stable installer protocol boundary", () => {
   const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   const config = loadConfig();

@@ -6,6 +6,7 @@ export const CONTRACT_VERSION = 1;
 export const INSTALLER_VERSION = "1.0.7";
 export const MAX_OFFLINE_SECONDS = 7 * 24 * 60 * 60;
 export const DOWNLOAD_URL_SECONDS = 300;
+export const CLOCK_SKEW_SECONDS = 300;
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 

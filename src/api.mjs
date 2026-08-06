@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { CONTRACT_VERSION, DOWNLOAD_URL_SECONDS, requireHttpsUrl } from "./config.mjs";
+import { CLOCK_SKEW_SECONDS, CONTRACT_VERSION, DOWNLOAD_URL_SECONDS, requireHttpsUrl } from "./config.mjs";
 import { validateLicenseKey } from "./license-input.mjs";
 
 const SAFE_ERRORS = new Map([
@@ -122,7 +122,7 @@ export const authorizeRelease = async ({
     || typeof response.authorizationId !== "string"
     || response.authorizationId.length < 1
     || !Number.isSafeInteger(response.issuedAt)
-    || response.issuedAt > now
+    || response.issuedAt > now + CLOCK_SKEW_SECONDS
     || !release
     || !semver.test(release.version)
     || !semver.test(release.minimumInstallerVersion)
@@ -134,12 +134,12 @@ export const authorizeRelease = async ({
     || release.sizeBytes < 1
     || !Number.isSafeInteger(release.downloadUrlExpiresAt)
     || release.downloadUrlExpiresAt - response.issuedAt !== DOWNLOAD_URL_SECONDS
-    || release.downloadUrlExpiresAt <= now
+    || release.downloadUrlExpiresAt <= now - CLOCK_SKEW_SECONDS
     || !rollback
     || typeof rollback.allowed !== "boolean"
     || (
       rollback.allowed
-        ? !semver.test(rollback.targetVersion) || !Number.isSafeInteger(rollback.supportedUntil) || rollback.supportedUntil <= now
+        ? !semver.test(rollback.targetVersion) || !Number.isSafeInteger(rollback.supportedUntil) || rollback.supportedUntil <= now - CLOCK_SKEW_SECONDS
         : rollback.targetVersion !== null || rollback.supportedUntil !== null
     )
   ) {
