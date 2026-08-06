@@ -47,7 +47,8 @@
     "src/identity.mjs",
     "src/installer.mjs",
     "src/license-input.mjs",
-    "src/private-launcher.mjs"
+    "src/private-launcher.mjs",
+    "src/refresh-credential.mjs"
   ],
   "engines": {
     "node": ">=20"

@@ -464,6 +464,7 @@ test("public repository and packed npm archive contain no retired identity, secr
   assert.deepEqual(manifest.bin, { "visualstandard-install": "bin/install.mjs" });
   assert.equal(manifest.dependencies, undefined);
   assert.equal(metadata.files.find((file) => file.path === "bin/install.mjs")?.mode, 0o755);
+  assert.ok(metadata.files.some((file) => file.path === "src/refresh-credential.mjs"));
   assert.deepEqual(metadata.files.map((file) => file.path).sort(), [...manifest.files, "package.json"].sort());
 });
 
