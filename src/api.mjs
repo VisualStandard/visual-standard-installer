@@ -77,7 +77,7 @@ export const activateLicense = async ({ config, licenseKey, installationId, fetc
       releaseChannel: config.releaseChannel,
     },
   });
-  if (response.contractVersion !== CONTRACT_VERSION || typeof response.entitlementToken !== "string" || !Number.isSafeInteger(response.expiresAt)) {
+  if (response.contractVersion !== CONTRACT_VERSION || typeof response.entitlementToken !== "string" || !Number.isSafeInteger(response.expiresAt) || !/^vsr1_[A-Za-z0-9_-]{43}$/.test(response.refreshToken)) {
     throw new Error("The activation response is invalid.");
   }
   return response;

@@ -9,6 +9,7 @@ import { verifyEntitlement, loadKeyring } from "./entitlement.mjs";
 import { readOrCreateInstallationId } from "./identity.mjs";
 import { readLicenseKey } from "./license-input.mjs";
 import { runPrivateInstaller } from "./private-launcher.mjs";
+import { writeRefreshCredential } from "./refresh-credential.mjs";
 
 const PRODUCT = "Visual Standard Motion Graphics Creator";
 
@@ -35,6 +36,7 @@ export const install = async ({
   loadConfigImpl = loadConfig,
   checkEnvironmentImpl = checkEnvironment,
   runPrivateInstallerImpl = runPrivateInstaller,
+  writeRefreshCredentialImpl = writeRefreshCredential,
   log = console.log,
 } = {}) => {
   checkEnvironmentImpl({ platform });
@@ -54,6 +56,7 @@ export const install = async ({
     now,
   });
   if (activation.expiresAt !== entitlement.expiresAt) throw new Error("The activation response could not be verified.");
+  writeRefreshCredentialImpl({ installationId, refreshToken: activation.refreshToken });
   const release = await authorizeRelease({
     config,
     entitlementToken: activation.entitlementToken,

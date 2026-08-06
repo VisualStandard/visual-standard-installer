@@ -125,6 +125,7 @@ const fixture = (directory, { invalidSignature = false, privateFailure = false, 
         contractVersion: 1,
         entitlementToken: token,
         expiresAt: now + 3600,
+        refreshToken: `vsr1_${"R".repeat(43)}`,
       }), { status: 200 });
     }
     if (String(url).endsWith("/v1/releases/authorize")) {
@@ -189,6 +190,7 @@ test("clean install activates, verifies, downloads, delegates privately, and ins
       promptCount += 1;
       return testLicense;
     },
+    writeRefreshCredentialImpl: () => {},
     log: (line) => logs.push(line),
   });
   assert.equal(promptCount, 1);
@@ -229,6 +231,7 @@ test("normal Mac and service clock skew does not block installation", async () =
     checkEnvironmentImpl: () => {},
     loadConfigImpl: () => scenario.config,
     readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {},
     log: () => {},
   });
   assert.ok(existsSync(join(home, ".visual-standard", "motion-graphics-creator", "installation-verified.json")));
@@ -287,6 +290,7 @@ test("invalid entitlement signature stops before authorization or download", asy
     checkEnvironmentImpl: () => {},
     loadConfigImpl: () => scenario.config,
     readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {},
     log: () => {},
   }), /signature is invalid/i);
   assert.equal(scenario.calls.length, 1);
@@ -307,6 +311,7 @@ test("an entitlement for another product stops before authorization or download"
     checkEnvironmentImpl: () => {},
     loadConfigImpl: () => scenario.config,
     readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {},
     log: () => {},
   }), /not valid for this installation/i);
   assert.equal(scenario.calls.length, 1);
@@ -326,6 +331,7 @@ test("an entitlement for another installation stops before authorization or down
     checkEnvironmentImpl: () => {},
     loadConfigImpl: () => scenario.config,
     readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {},
     log: () => {},
   }), /not valid for this installation/i);
   assert.equal(scenario.calls.length, 1);
@@ -345,6 +351,7 @@ test("private diagnostics are suppressed and converted to buyer-safe output", as
     checkEnvironmentImpl: () => {},
     loadConfigImpl: () => scenario.config,
     readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {},
     log: () => {},
   }), (error) => {
     assert.equal(error.message, "Visual Standard Motion Graphics Creator could not be installed.");
@@ -367,6 +374,7 @@ test("a private installer that exits zero without installing cannot report succe
     checkEnvironmentImpl: () => {},
     loadConfigImpl: () => scenario.config,
     readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {},
     log: () => {},
   }), /installation could not be verified/i);
 });
