@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -42,9 +42,6 @@ export const install = async ({
   checkEnvironmentImpl({ platform });
   const config = loadConfigImpl({ env });
   const runtimeHome = join(home, ".visual-standard", "motion-graphics-creator");
-  if (existsSync(runtimeHome)) {
-    throw new Error(`${PRODUCT} is already installed. Run /visual-update in Claude Code.`);
-  }
   const licenseKey = readLicenseKeyImpl({ platform });
   const installationId = readOrCreateInstallationId(home);
   const activation = await activateLicense({ config, licenseKey, installationId, fetchImpl });

@@ -217,6 +217,36 @@ test("clean install activates, verifies, downloads, delegates privately, and ins
   for (const value of forbidden) assert.equal(output.toLowerCase().includes(value.toLowerCase()), false);
 });
 
+test("an existing installation can be securely upgraded and keeps user-owned files", async () => {
+  const home = mkdtempSync(join(tmpdir(), "visual-standard-existing-"));
+  const scenario = fixture(home);
+  const stateDirectory = join(home, ".visual-standard", "installer-state");
+  const runtimeHome = join(home, ".visual-standard", "motion-graphics-creator");
+  mkdirSync(stateDirectory, { recursive: true, mode: 0o700 });
+  mkdirSync(runtimeHome, { recursive: true });
+  writeFileSync(join(stateDirectory, "installation-id"), `${scenario.installationId}\n`, { mode: 0o600 });
+  writeFileSync(join(runtimeHome, "my-project.txt"), "keep me\n");
+  let refreshWrites = 0;
+
+  await install({
+    home,
+    platform: "darwin",
+    now,
+    fetchImpl: scenario.fetchImpl,
+    checkEnvironmentImpl: () => {},
+    loadConfigImpl: () => scenario.config,
+    readLicenseKeyImpl: () => testLicense,
+    writeRefreshCredentialImpl: () => {
+      refreshWrites += 1;
+    },
+    log: () => {},
+  });
+
+  assert.equal(refreshWrites, 1);
+  assert.equal(readFileSync(join(runtimeHome, "my-project.txt"), "utf8"), "keep me\n");
+  assert.ok(existsSync(join(runtimeHome, "installation-verified.json")));
+});
+
 test("normal Mac and service clock skew does not block installation", async () => {
   const home = mkdtempSync(join(tmpdir(), "visual-standard-clock-skew-"));
   const scenario = fixture(home);
