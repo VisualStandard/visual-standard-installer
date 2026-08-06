@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import { dirname, join, posix, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import { pathToFileURL } from "node:url";
 
 const runTar = (args, cwd) => spawnSync("tar", args, {
   cwd,
@@ -60,7 +61,13 @@ export const runPrivateInstaller = ({
   writeFileSync(handoffFile, `${JSON.stringify(handoff)}\n`, { mode: 0o600, flag: "wx" });
   chmodSync(handoffFile, 0o600);
   try {
-    const result = spawn(process.execPath, [entrypoint], {
+    const moduleUrl = pathToFileURL(entrypoint).href;
+    const invokePrivateInstaller = [
+      `const installer = await import(${JSON.stringify(moduleUrl)});`,
+      'if (typeof installer.installFromPrivateHandoff !== "function") throw new Error("The authorized installer interface is unavailable.");',
+      "installer.installFromPrivateHandoff();",
+    ].join("\n");
+    const result = spawn(process.execPath, ["--input-type=module", "--eval", invokePrivateInstaller], {
       cwd: packageRoot,
       encoding: "utf8",
       stdio: ["ignore", "ignore", "pipe"],
@@ -71,7 +78,13 @@ export const runPrivateInstaller = ({
       },
       maxBuffer: 1024 * 1024,
     });
-    if (result.status !== 0) throw new Error("Visual Standard Motion Graphics Creator could not be installed.");
+    if (result.status !== 0) {
+      if (process.env.VISUAL_STANDARD_INSTALL_DIAGNOSTICS === "1") {
+        const diagnostic = result.stderr.trim().split("\n").slice(-12).join("\n");
+        throw new Error(`Visual Standard TEST diagnostic:\n${diagnostic || "Private installer exited without diagnostic output."}`);
+      }
+      throw new Error("Visual Standard Motion Graphics Creator could not be installed.");
+    }
     const installedEntrypoint = join(runtimeHome, "alpha", "cli.mjs");
     if (!existsSync(installedEntrypoint) || !lstatSync(installedEntrypoint).isFile()) {
       throw new Error("Visual Standard Motion Graphics Creator installation could not be verified.");

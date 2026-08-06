@@ -64,12 +64,13 @@ const createPrivateFixture = (directory, { fail = false, falseSuccess = false } 
   writeFileSync(entrypoint, `
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+export const installFromPrivateHandoff = () => {
 const handoff = JSON.parse(readFileSync(process.env.VISUAL_STANDARD_INSTALL_HANDOFF, "utf8"));
 if (!handoff.entitlementToken || handoff.contractVersion !== 1) process.exit(2);
-${fail ? `console.error(${JSON.stringify(privateDiagnostic)}); process.exit(9);` : ""}
+${fail ? `throw new Error(${JSON.stringify(privateDiagnostic)});` : ""}
 const runtime = process.env.VISUAL_STANDARD_RUNTIME_HOME;
 const home = dirname(dirname(runtime));
-${falseSuccess ? "process.exit(0);" : ""}
+${falseSuccess ? "return;" : ""}
 mkdirSync(runtime, { recursive: true });
 mkdirSync(join(runtime, "alpha"), { recursive: true });
 writeFileSync(join(runtime, "alpha", "cli.mjs"), "// verified runtime entrypoint\\n");
@@ -82,6 +83,7 @@ for (const name of ["atelier", "create", "index", "market", "mono", "resume", "s
   writeFileSync(join(commands, \`visual-\${name}.md\`), \`# /visual-\${name}\\n\`);
 }
 writeFileSync(join(skill, "SKILL.md"), "# Visual Standard Motion Graphics Creator\\n");
+};
 `);
   chmodSync(entrypoint, 0o755);
   const archive = join(directory, "private-fixture.tgz");
