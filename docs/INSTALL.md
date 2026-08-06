@@ -6,11 +6,11 @@ This installer supports **macOS only**.
 
 1. Complete the purchase through the official Visual Standard website.
 2. Wait for the purchase email containing your Visual Standard license key.
-3. Confirm that Node.js 20+ and Claude Code are installed and that Claude Code is signed in.
+3. Confirm that Node.js 20+, Homebrew, and the Claude app with Code access are installed and signed in.
 4. Open the macOS Terminal app and run `npx @visualstandard/install`.
 5. Enter the license key only in the installer's hidden license prompt.
 6. Wait for installation and diagnostics to finish.
-7. Start a new Claude Code session if the new command is not immediately visible.
+7. Start a new Code session in the Claude app.
 8. Run `/visual-create` and provide a script plus an optional voiceover.
 
 The success page and purchase email should always show the same command. The
@@ -21,7 +21,8 @@ license key must never be appended to the command.
 - macOS
 - Node.js 20 or newer
 - npm
-- Claude Code installed and signed in
+- Homebrew
+- the Claude app with Code access, installed and signed in
 - a valid Visual Standard Motion Graphics Creator license key
 
 ## Inspect before running
@@ -49,6 +50,9 @@ The installer requests the license key through a secure terminal prompt or hidde
 macOS dialog. Do not place a license key in a command, chat message, shell history,
 environment file, issue, or support ticket.
 
+It installs the runtime, locked npm dependencies, Playwright Chromium, FFmpeg,
+Whisper, and the required speech model, then verifies the complete setup.
+
 The official public identity is `@visualstandard/install` on npm,
 `VisualStandard/visual-standard-installer` on GitHub, and `visualstandard.io` on
 the web. The package is dependency-free, has no npm lifecycle scripts, and its
@@ -62,7 +66,7 @@ The default public runtime location is:
 
 Use `VISUAL_STANDARD_HOME` only when a custom user-owned runtime location is needed.
 
-After installation, open Claude Code and run:
+After installation, open the Claude app, start a new Code session, and run:
 
 ```text
 /visual-create

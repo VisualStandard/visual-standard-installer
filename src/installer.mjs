@@ -22,6 +22,7 @@ export const checkEnvironment = ({ platform = process.platform, nodeVersion = pr
   if (Number(nodeVersion.split(".")[0]) < 20) throw new Error("Node.js 20 or newer is required.");
   if (!commandExists("tar")) throw new Error("The macOS archive utility is required.");
   if (!commandExists("claude")) throw new Error("Claude Code must be installed and signed in.");
+  if (!commandExists("brew")) throw new Error("Homebrew is required so Visual Standard can install FFmpeg and Whisper. Install Homebrew from brew.sh, then run this installer again.");
 };
 
 export const install = async ({
@@ -72,6 +73,8 @@ export const install = async ({
         installerVersion: config.installerVersion,
         entitlementToken: activation.entitlementToken,
         deviceId: entitlement.deviceId,
+        installationId: entitlement.installationId,
+        productCode: entitlement.productCode,
         channel: entitlement.channel,
         issuedAt: entitlement.issuedAt,
         expiresAt: entitlement.expiresAt,

@@ -3,7 +3,7 @@
 Official installer for Visual Standard Motion Graphics Creator, a macOS tool that turns a script
 and optional voiceover into an editable motion-graphics project in Claude Code.
 
-> **Platform support:** macOS only. Node.js 20+ and Claude Code are required.
+> **Platform support:** macOS only. Node.js 20+, Homebrew, and the Claude app with Code access are required.
 
 - Official website: https://visualstandard.io
 - Installation: [official installation guide](https://github.com/VisualStandard/visual-standard-installer/blob/main/docs/INSTALL.md)
@@ -22,7 +22,8 @@ and optional voiceover into an editable motion-graphics project in Claude Code.
 
 - macOS
 - Node.js 20 or newer
-- Claude Code, installed and signed in
+- Homebrew
+- the Claude app with Code access, installed and signed in
 - A valid Visual Standard Motion Graphics Creator license key
 
 ## Install
@@ -40,6 +41,9 @@ license key delivered after purchase. It then:
 2. requests an authorized runtime download;
 3. verifies the downloaded runtime checksum before installation;
 4. delegates installation and diagnostics to the authorized private installer.
+
+The private installer also installs the locked npm dependencies, Playwright Chromium,
+FFmpeg, Whisper, and the required speech model before reporting success.
 
 The license key is not printed in the command or stored in this npm package.
 

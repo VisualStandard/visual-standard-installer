@@ -70,7 +70,7 @@ export const runPrivateInstaller = ({
     const result = spawn(process.execPath, ["--input-type=module", "--eval", invokePrivateInstaller], {
       cwd: packageRoot,
       encoding: "utf8",
-      stdio: ["ignore", "ignore", "pipe"],
+      stdio: ["ignore", "inherit", "pipe"],
       env: {
         ...process.env,
         VISUAL_STANDARD_INSTALL_HANDOFF: handoffFile,
