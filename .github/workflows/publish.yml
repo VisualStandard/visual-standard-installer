@@ -4,6 +4,14 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      npm_tag:
+        description: npm dist-tag for a protected non-default release
+        required: true
+        default: test
+        type: choice
+        options:
+          - test
   release:
     types: [published]
 
@@ -40,6 +48,11 @@ jobs:
           VERSION="$(node -p "require('./package.json').version")"
           test "v${VERSION}" = "${GITHUB_REF_NAME}"
 
+      - name: Verify manual release stays on the TEST channel
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: test "${{ inputs.npm_tag }}" = "test"
+
       - name: Test the public installer
         run: npm test
 
@@ -49,3 +62,7 @@ jobs:
       - name: Publish production release with provenance
         if: github.event_name == 'release'
         run: npm publish --access public --tag latest --provenance
+
+      - name: Publish TEST release with provenance
+        if: github.event_name == 'workflow_dispatch'
+        run: npm publish --access public --tag "${{ inputs.npm_tag }}" --provenance
