@@ -1,0 +1,63 @@
+name: Promote staged installer to npm latest
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type promote-1.0.12-to-latest
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  RELEASE_VERSION: 1.0.12
+  RELEASE_SHA256: 077b6b9ef3ac8156c29d3537178ac354f5a86106d5bda948f0b6c6222aa501c7
+  SMOKE_TAG: smoke
+
+jobs:
+  promote:
+    runs-on: macos-latest
+    environment: npm
+    steps:
+      - name: Require exact operator confirmation
+        shell: bash
+        run: test "${{ inputs.confirmation }}" = "promote-1.0.12-to-latest"
+
+      - name: Check out audited automation
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Require scoped dist-tag credential
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_DIST_TAG_TOKEN }}
+        run: test -n "$NODE_AUTH_TOKEN"
+
+      - name: Verify smoke version and registry tarball
+        run: |
+          node scripts/verify-registry-release.mjs \
+            --version "$RELEASE_VERSION" \
+            --sha256 "$RELEASE_SHA256" \
+            --expect-version present \
+            --expect-tag "$SMOKE_TAG=$RELEASE_VERSION" \
+            --expect-tag-not-version latest
+
+      - name: Move latest without publishing
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_DIST_TAG_TOKEN }}
+        run: npm dist-tag add "@visualstandard/install@$RELEASE_VERSION" latest
+
+      - name: Verify latest and tarball after promotion
+        run: |
+          node scripts/verify-registry-release.mjs \
+            --version "$RELEASE_VERSION" \
+            --sha256 "$RELEASE_SHA256" \
+            --expect-version present \
+            --expect-tag "$SMOKE_TAG=$RELEASE_VERSION" \
+            --expect-tag "latest=$RELEASE_VERSION"
