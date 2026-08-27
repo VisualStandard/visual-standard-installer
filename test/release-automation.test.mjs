@@ -5,14 +5,14 @@ import test from "node:test";
 import { parseChecksumRecord, verifyPackedArtifact } from "../scripts/verify-local-release.mjs";
 import { verifyRegistryState } from "../scripts/verify-registry-release.mjs";
 
-const version = "1.0.12";
+const version = "1.0.13";
 const bytes = Buffer.from("audited-tarball-fixture");
 const sha256 = createHash("sha256").update(bytes).digest("hex");
 const shasum = createHash("sha1").update(bytes).digest("hex");
 const integrity = `sha512-${createHash("sha512").update(bytes).digest("base64")}`;
 
 test("local release verification binds the recorded checksum to the packed bytes", () => {
-  const checksumRecord = parseChecksumRecord(`${sha256}  visualstandard-install-1.0.12.tgz\n`, version);
+  const checksumRecord = parseChecksumRecord(`${sha256}  visualstandard-install-1.0.13.tgz\n`, version);
   const result = verifyPackedArtifact({
     metadata: {
       name: "@visualstandard/install",
@@ -48,7 +48,7 @@ test("registry verification requires the exact staged tags and immutable tarball
         name: "@visualstandard/install",
         version,
         dist: {
-          tarball: "https://registry.npmjs.org/@visualstandard/install/-/install-1.0.12.tgz",
+          tarball: "https://registry.npmjs.org/@visualstandard/install/-/install-1.0.13.tgz",
           shasum,
           integrity,
         },

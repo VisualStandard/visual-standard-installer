@@ -22,25 +22,25 @@ const productionKeyring = () => {
   return {
     contractVersion: 1,
     keys: [{
-      kid: "prod-2026-08-v1",
+      kid: "prod-2026-08-v2",
       alg: "Ed25519",
       publicKeySpkiBase64: publicKey.export({ format: "der", type: "spki" }).toString("base64"),
     }],
   };
 };
 
-test("installer 1.0.12 accepts only the coordinated stable production contract", () => {
+test("installer 1.0.13 accepts only the coordinated stable production contract", () => {
   const result = validateProductionReleaseContract({ manifest, config, keyring: productionKeyring() });
-  assert.equal(result.packageVersion, "1.0.12");
-  assert.equal(result.kid, "prod-2026-08-v1");
+  assert.equal(result.packageVersion, "1.0.13");
+  assert.equal(result.kid, "prod-2026-08-v2");
   assert.match(result.publicKeySpkiSha256, /^[a-f0-9]{64}$/);
 });
 
 test("release preflight accepts the distributed production keyring", () => {
   const keyring = JSON.parse(readFileSync("entitlement-public-keys.json", "utf8"));
   const result = validateProductionReleaseContract({ manifest, config, keyring });
-  assert.equal(result.kid, "prod-2026-08-v1");
-  assert.equal(result.publicKeySpkiSha256, "3321a43f4d06572f308b8c8bc4bc3ef08af3d5d600f6f0fabe240fbc4e08e1e4");
+  assert.equal(result.kid, "prod-2026-08-v2");
+  assert.equal(result.publicKeySpkiSha256, "9d5c2214116ebfa1c4a11cf84b1d30553ffde51a062931ac50af3054bcfce96e");
 });
 
 test("release preflight still rejects a TEST keyring", () => {

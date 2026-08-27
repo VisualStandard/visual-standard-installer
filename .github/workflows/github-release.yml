@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: Type create-github-release-v1.0.12
+        description: Type create-github-release-v1.0.13
         required: true
         type: string
 
@@ -12,10 +12,10 @@ permissions:
   contents: write
 
 env:
-  RELEASE_VERSION: 1.0.12
-  RELEASE_TAG: v1.0.12
+  RELEASE_VERSION: 1.0.13
+  RELEASE_TAG: v1.0.13
   RELEASE_COMMIT: 78d8493a5b6d3629607cbbe801c5ed39e618415d
-  RELEASE_SHA256: 077b6b9ef3ac8156c29d3537178ac354f5a86106d5bda948f0b6c6222aa501c7
+  RELEASE_SHA256: 9190f9317ba80e824465d4eef3daacffa759e9da8cd3f15f2b631370718e5725
 
 jobs:
   release:
@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Require exact operator confirmation
         shell: bash
-        run: test "${{ inputs.confirmation }}" = "create-github-release-v1.0.12"
+        run: test "${{ inputs.confirmation }}" = "create-github-release-v1.0.13"
 
       - name: Check out audited automation and tags
         uses: actions/checkout@v6

@@ -1,7 +1,7 @@
 import { createHash, createPublicKey } from "node:crypto";
 
 export const PRODUCTION_RELEASE = Object.freeze({
-  packageVersion: "1.0.12",
+  packageVersion: "1.0.13",
   contractVersion: 1,
   installerVersion: "1.0.7",
   apiBaseUrl: "https://visualstandard.io",

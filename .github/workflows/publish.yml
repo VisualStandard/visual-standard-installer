@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: Verify only, or publish 1.0.12 to the non-default smoke tag
+        description: Verify only, or publish 1.0.13 to the non-default smoke tag
         required: true
         default: verify
         type: choice
@@ -14,7 +14,7 @@ on:
           - verify
           - stage-smoke
       confirmation:
-        description: Type stage-1.0.12-as-smoke for the staging operation
+        description: Type stage-1.0.13-as-smoke for the staging operation
         required: false
         type: string
 
@@ -22,10 +22,10 @@ permissions:
   contents: read
 
 env:
-  RELEASE_VERSION: 1.0.12
-  RELEASE_TAG: v1.0.12
+  RELEASE_VERSION: 1.0.13
+  RELEASE_TAG: v1.0.13
   RELEASE_COMMIT: 78d8493a5b6d3629607cbbe801c5ed39e618415d
-  RELEASE_SHA256: 077b6b9ef3ac8156c29d3537178ac354f5a86106d5bda948f0b6c6222aa501c7
+  RELEASE_SHA256: 9190f9317ba80e824465d4eef3daacffa759e9da8cd3f15f2b631370718e5725
   SMOKE_TAG: smoke
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: Require exact operator confirmation
         shell: bash
-        run: test "${{ inputs.confirmation }}" = "stage-1.0.12-as-smoke"
+        run: test "${{ inputs.confirmation }}" = "stage-1.0.13-as-smoke"
 
       - name: Check out audited source
         uses: actions/checkout@v6
