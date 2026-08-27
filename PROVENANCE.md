@@ -1,12 +1,12 @@
 # Package provenance
 
-## Release 1.0.11
+## Release 1.0.12
 
-Version 1.0.11 is the production installer for the official
+Version 1.0.12 is the production installer candidate for the official
 `https://visualstandard.io` service. It is published only as npm `latest`, after
 the production backend and private authorized release pass the clean-Mac test.
 
-The npm package patch version is `1.0.11`. Its private-release compatibility
+The npm package patch version is `1.0.12`. Its private-release compatibility
 compatibility capability remains installer protocol `1.0.7`; documentation and
 workflow-only patches do not raise the minimum compatible private installer version.
 

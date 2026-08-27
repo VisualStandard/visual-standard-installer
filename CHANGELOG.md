@@ -3,8 +3,9 @@
 All notable public-installer changes are recorded here. This file covers the thin
 public installer only; it does not disclose or describe the private creative runtime.
 
-## 1.0.11
+## 1.0.12
 
+- Coordinates the public wrapper with private runtime 1.0.12 on the stable production contract.
 - Adds explicit buyer-safe guidance for every contracted activation and release error.
 - Verifies the signed entitlement belongs to Motion Graphics Creator.
 - Directs buyers to install from the macOS Terminal before opening Claude Code.

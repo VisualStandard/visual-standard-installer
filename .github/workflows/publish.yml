@@ -56,6 +56,9 @@ jobs:
       - name: Test the public installer
         run: npm test
 
+      - name: Verify production release contract and keyring
+        run: npm run release:preflight
+
       - name: Verify package contents
         run: npm pack --dry-run --force
 
