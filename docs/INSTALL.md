@@ -6,12 +6,13 @@ This installer supports **macOS only**.
 
 1. Complete the purchase through the official Visual Standard website.
 2. Wait for the purchase email containing your Visual Standard license key.
-3. Confirm that Node.js 20+ and Claude Code are installed and that Claude Code is signed in.
-4. Open Claude Code and paste `npx @visualstandard/install`.
+3. Confirm that Node.js 20+, Homebrew, and the Claude app with Code access are installed and signed in.
+4. Open the macOS Terminal app and run `npx @visualstandard/install`.
 5. Enter the license key only in the installer's hidden license prompt.
 6. Wait for installation and diagnostics to finish.
-7. Start a new Claude Code session if the new command is not immediately visible.
-8. Run `/visual-create` and provide a script plus an optional voiceover.
+7. Quit and reopen the Claude app, then open **Code**.
+8. Start a new **Local** session on the Mac where the product was installed.
+9. Run `/visual-create` and provide a script plus an optional voiceover.
 
 The success page and purchase email should always show the same command. The
 license key must never be appended to the command.
@@ -21,7 +22,8 @@ license key must never be appended to the command.
 - macOS
 - Node.js 20 or newer
 - npm
-- Claude Code installed and signed in
+- Homebrew
+- the Claude app with Code access, installed and signed in
 - a valid Visual Standard Motion Graphics Creator license key
 
 ## Inspect before running
@@ -39,7 +41,7 @@ credentials.
 
 ## Install
 
-Open Claude Code and paste:
+Open the macOS **Terminal** app and run:
 
 ```bash
 npx @visualstandard/install
@@ -48,6 +50,9 @@ npx @visualstandard/install
 The installer requests the license key through a secure terminal prompt or hidden
 macOS dialog. Do not place a license key in a command, chat message, shell history,
 environment file, issue, or support ticket.
+
+It installs the runtime, locked npm dependencies, Playwright Chromium, FFmpeg,
+Whisper, and the required speech model, then verifies the complete setup.
 
 The official public identity is `@visualstandard/install` on npm,
 `VisualStandard/visual-standard-installer` on GitHub, and `visualstandard.io` on
@@ -62,7 +67,8 @@ The default public runtime location is:
 
 Use `VISUAL_STANDARD_HOME` only when a custom user-owned runtime location is needed.
 
-After installation, open Claude Code and run:
+After installation, quit and reopen the Claude app. Open **Code**, choose the
+**Local** environment, select a project folder, start the session, and run:
 
 ```text
 /visual-create
@@ -73,6 +79,11 @@ The installed public commands are `/visual-create`, `/visual-resume`,
 `/visual-atelier`, and `/visual-market`. The installed skill is
 `motion-graphics-creator`.
 
-If installation stops or Claude Code refuses to run the package, use the
+The session must be Local. Cloud sessions do not read personal skills from the
+Mac's `~/.claude/skills` directory and therefore cannot run the locally installed
+motion-graphics runtime.
+
+Do not paste the installer command into Claude Code. Claude Code is used only
+after installation, starting with `/visual-create`. If installation stops, use the
 [troubleshooting guide](TROUBLESHOOTING.md). Do not keep retrying with different
 commands or expose the license key while troubleshooting.

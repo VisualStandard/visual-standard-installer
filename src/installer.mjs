@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -9,6 +9,7 @@ import { verifyEntitlement, loadKeyring } from "./entitlement.mjs";
 import { readOrCreateInstallationId } from "./identity.mjs";
 import { readLicenseKey } from "./license-input.mjs";
 import { runPrivateInstaller } from "./private-launcher.mjs";
+import { writeRefreshCredential } from "./refresh-credential.mjs";
 
 const PRODUCT = "Visual Standard Motion Graphics Creator";
 
@@ -22,6 +23,7 @@ export const checkEnvironment = ({ platform = process.platform, nodeVersion = pr
   if (Number(nodeVersion.split(".")[0]) < 20) throw new Error("Node.js 20 or newer is required.");
   if (!commandExists("tar")) throw new Error("The macOS archive utility is required.");
   if (!commandExists("claude")) throw new Error("Claude Code must be installed and signed in.");
+  if (!commandExists("brew")) throw new Error("Homebrew is required so Visual Standard can install FFmpeg and Whisper. Install Homebrew from brew.sh, then run this installer again.");
 };
 
 export const install = async ({
@@ -34,24 +36,24 @@ export const install = async ({
   loadConfigImpl = loadConfig,
   checkEnvironmentImpl = checkEnvironment,
   runPrivateInstallerImpl = runPrivateInstaller,
+  writeRefreshCredentialImpl = writeRefreshCredential,
   log = console.log,
 } = {}) => {
   checkEnvironmentImpl({ platform });
   const config = loadConfigImpl({ env });
   const runtimeHome = join(home, ".visual-standard", "motion-graphics-creator");
-  if (existsSync(runtimeHome)) {
-    throw new Error(`${PRODUCT} is already installed. Run /visual-update in Claude Code.`);
-  }
   const licenseKey = readLicenseKeyImpl({ platform });
   const installationId = readOrCreateInstallationId(home);
   const activation = await activateLicense({ config, licenseKey, installationId, fetchImpl });
   const entitlement = verifyEntitlement(activation.entitlementToken, {
     keyring: loadKeyring(config.keyringFile),
     expectedChannel: config.releaseChannel,
-    expectedDeviceId: installationId,
+    expectedInstallationId: installationId,
+    expectedProductCode: config.productCode,
     now,
   });
   if (activation.expiresAt !== entitlement.expiresAt) throw new Error("The activation response could not be verified.");
+  writeRefreshCredentialImpl({ installationId, refreshToken: activation.refreshToken });
   const release = await authorizeRelease({
     config,
     entitlementToken: activation.entitlementToken,
@@ -71,6 +73,8 @@ export const install = async ({
         installerVersion: config.installerVersion,
         entitlementToken: activation.entitlementToken,
         deviceId: entitlement.deviceId,
+        installationId: entitlement.installationId,
+        productCode: entitlement.productCode,
         channel: entitlement.channel,
         issuedAt: entitlement.issuedAt,
         expiresAt: entitlement.expiresAt,
@@ -87,5 +91,5 @@ export const install = async ({
     rmSync(staging, { recursive: true, force: true });
   }
   log(`${PRODUCT} installed and verified.`);
-  log("Open Claude Code and run /visual-create.");
+  log("Quit and reopen the Claude app, open Code, start a Local session, and run /visual-create.");
 };

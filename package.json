@@ -1,6 +1,6 @@
 {
   "name": "@visualstandard/install",
-  "version": "1.0.10",
+  "version": "1.0.13",
   "description": "Auditable installer for Visual Standard Motion Graphics Creator.",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Visual Standard <support@visualstandard.io>",
@@ -47,7 +47,9 @@
     "src/identity.mjs",
     "src/installer.mjs",
     "src/license-input.mjs",
-    "src/private-launcher.mjs"
+    "src/private-launcher.mjs",
+    "src/production-release-contract.mjs",
+    "src/refresh-credential.mjs"
   ],
   "engines": {
     "node": ">=20"
@@ -58,9 +60,10 @@
   "publishConfig": {
     "access": "public",
     "provenance": true,
-    "tag": "acceptance"
+    "tag": "latest"
   },
   "scripts": {
+    "release:preflight": "node scripts/validate-production-release.mjs",
     "test": "node --test test/*.test.mjs"
   }
 }

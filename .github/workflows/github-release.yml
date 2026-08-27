@@ -1,0 +1,67 @@
+name: Create verified GitHub Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type create-github-release-v1.0.13
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  RELEASE_VERSION: 1.0.13
+  RELEASE_TAG: v1.0.13
+  RELEASE_COMMIT: fb0871d169daa24d7ea9c3b339bd5c6f0f8f70ab
+  RELEASE_SHA256: 9190f9317ba80e824465d4eef3daacffa759e9da8cd3f15f2b631370718e5725
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Require exact operator confirmation
+        shell: bash
+        run: test "${{ inputs.confirmation }}" = "create-github-release-v1.0.13"
+
+      - name: Check out audited automation and tags
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Verify immutable Git tag
+        shell: bash
+        run: |
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$RELEASE_COMMIT"
+          test "$(git show "$RELEASE_TAG:package.json" | jq -r .version)" = "$RELEASE_VERSION"
+          test "$(git show "$RELEASE_TAG:CHECKSUMS.sha256")" = "$RELEASE_SHA256  visualstandard-install-$RELEASE_VERSION.tgz"
+
+      - name: Verify npm latest uses the audited tarball
+        run: |
+          node scripts/verify-registry-release.mjs \
+            --version "$RELEASE_VERSION" \
+            --sha256 "$RELEASE_SHA256" \
+            --expect-version present \
+            --expect-tag "smoke=$RELEASE_VERSION" \
+            --expect-tag "latest=$RELEASE_VERSION"
+
+      - name: Refuse to overwrite an existing GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release already exists; refusing to overwrite it."
+            exit 1
+          fi
+
+      - name: Create GitHub Release without npm mutation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$RELEASE_TAG" --verify-tag --title "Visual Standard installer $RELEASE_VERSION" --generate-notes

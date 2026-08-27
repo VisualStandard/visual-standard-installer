@@ -1,27 +1,32 @@
 import { randomBytes } from "node:crypto";
-import { CONTRACT_VERSION, DOWNLOAD_URL_SECONDS, requireHttpsUrl } from "./config.mjs";
+import { CLOCK_SKEW_SECONDS, CONTRACT_VERSION, DOWNLOAD_URL_SECONDS, requireHttpsUrl } from "./config.mjs";
 import { validateLicenseKey } from "./license-input.mjs";
 
 const SAFE_ERRORS = new Map([
+  ["invalid_request", "The installer request was rejected. Install the current Visual Standard installer and try again."],
   ["license_invalid", "The license key is invalid."],
   ["license_revoked", "This license is not active. Contact support."],
   ["activation_limit_reached", "This license is already active on two Macs."],
   ["entitlement_invalid", "The local authorization is invalid. Activate again."],
   ["entitlement_expired", "The authorization expired. Enter the license key again."],
   ["entitlement_revoked", "This authorization has been revoked. Contact support."],
+  ["device_inactive", "This Mac is not active for the license. Contact support."],
   ["channel_not_allowed", "No release is available for this license channel."],
+  ["rollback_not_allowed", "The requested rollback is not authorized."],
   ["release_not_available", "No eligible Visual Standard Motion Graphics Creator release is available."],
-  ["installer_update_required", "A newer Visual Standard installer is required."],
+  ["idempotency_conflict", "The release request conflicted with an earlier attempt. Run the installer again."],
+  ["installer_update_required", "A newer Visual Standard installer is required. Run npx @visualstandard/install@latest."],
   ["rate_limited", "Too many requests. Wait and try again."],
   ["release_storage_unavailable", "The release service is temporarily unavailable."],
 ]);
 
 export class PublicApiError extends Error {
-  constructor(code, status) {
+  constructor(code, status, retryAfter = null) {
     super(SAFE_ERRORS.get(code) ?? "The Visual Standard service rejected the request.");
     this.name = "PublicApiError";
     this.code = code;
     this.status = status;
+    this.retryAfter = retryAfter;
   }
 }
 
@@ -53,7 +58,11 @@ const postJson = async (url, { headers = {}, body, fetchImpl = fetch }) => {
   }
   if (!response.ok) {
     const code = parsed.error ?? parsed.code;
-    throw new PublicApiError(typeof code === "string" ? code : "unknown", response.status);
+    throw new PublicApiError(
+      typeof code === "string" ? code : "unknown",
+      response.status,
+      response.headers.get("retry-after"),
+    );
   }
   return parsed;
 };
@@ -68,7 +77,7 @@ export const activateLicense = async ({ config, licenseKey, installationId, fetc
       releaseChannel: config.releaseChannel,
     },
   });
-  if (response.contractVersion !== CONTRACT_VERSION || typeof response.entitlementToken !== "string" || !Number.isSafeInteger(response.expiresAt)) {
+  if (response.contractVersion !== CONTRACT_VERSION || typeof response.entitlementToken !== "string" || !Number.isSafeInteger(response.expiresAt) || !/^vsr1_[A-Za-z0-9_-]{43}$/.test(response.refreshToken)) {
     throw new Error("The activation response is invalid.");
   }
   return response;
@@ -102,6 +111,7 @@ export const authorizeRelease = async ({
       contractVersion: CONTRACT_VERSION,
       action: "install",
       installerVersion: config.installerVersion,
+      installedVersion: null,
       requestedVersion: null,
     },
   });
@@ -113,7 +123,7 @@ export const authorizeRelease = async ({
     || typeof response.authorizationId !== "string"
     || response.authorizationId.length < 1
     || !Number.isSafeInteger(response.issuedAt)
-    || response.issuedAt > now
+    || response.issuedAt > now + CLOCK_SKEW_SECONDS
     || !release
     || !semver.test(release.version)
     || !semver.test(release.minimumInstallerVersion)
@@ -125,12 +135,12 @@ export const authorizeRelease = async ({
     || release.sizeBytes < 1
     || !Number.isSafeInteger(release.downloadUrlExpiresAt)
     || release.downloadUrlExpiresAt - response.issuedAt !== DOWNLOAD_URL_SECONDS
-    || release.downloadUrlExpiresAt <= now
+    || release.downloadUrlExpiresAt <= now - CLOCK_SKEW_SECONDS
     || !rollback
     || typeof rollback.allowed !== "boolean"
     || (
       rollback.allowed
-        ? !semver.test(rollback.targetVersion) || !Number.isSafeInteger(rollback.supportedUntil) || rollback.supportedUntil <= now
+        ? !semver.test(rollback.targetVersion) || !Number.isSafeInteger(rollback.supportedUntil) || rollback.supportedUntil <= now - CLOCK_SKEW_SECONDS
         : rollback.targetVersion !== null || rollback.supportedUntil !== null
     )
   ) {

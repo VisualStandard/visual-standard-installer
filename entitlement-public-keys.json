@@ -2,9 +2,9 @@
   "contractVersion": 1,
   "keys": [
     {
-      "kid": "test-ed25519-v1",
+      "kid": "prod-2026-08-v2",
       "alg": "Ed25519",
-      "publicKeySpkiBase64": "MCowBQYDK2VwAyEAuJk0nf2CHTulaLL+GnMbb7gKHc1hPQCS7gT5ySb8mCo="
+      "publicKeySpkiBase64": "MCowBQYDK2VwAyEALDM8Rykv4fW0srTTPJd6sjwPV9jb5SZFfPgnBtbnj40="
     }
   ]
 }

@@ -6,6 +6,7 @@ export const CONTRACT_VERSION = 1;
 export const INSTALLER_VERSION = "1.0.7";
 export const MAX_OFFLINE_SECONDS = 7 * 24 * 60 * 60;
 export const DOWNLOAD_URL_SECONDS = 300;
+export const CLOCK_SKEW_SECONDS = 300;
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -34,9 +35,13 @@ export const loadConfig = ({
     throw new Error("The Visual Standard installer configuration is unavailable.");
   }
   const apiBaseUrl = env.VISUAL_STANDARD_API_BASE_URL ?? stored.apiBaseUrl;
+  const productCode = env.VISUAL_STANDARD_PRODUCT_CODE ?? stored.productCode;
   const releaseChannel = env.VISUAL_STANDARD_RELEASE_CHANNEL ?? stored.releaseChannel;
   if (stored.contractVersion !== CONTRACT_VERSION || stored.installerVersion !== INSTALLER_VERSION) {
     throw new Error("The Visual Standard installer configuration is incompatible.");
+  }
+  if (typeof productCode !== "string" || !/^[a-z0-9][a-z0-9_]{1,62}$/.test(productCode)) {
+    throw new Error("The Visual Standard product configuration is invalid.");
   }
   if (typeof releaseChannel !== "string" || !/^[a-z0-9][a-z0-9-]{1,62}$/.test(releaseChannel)) {
     throw new Error("The Visual Standard release channel is invalid.");
@@ -48,6 +53,7 @@ export const loadConfig = ({
     contractVersion: CONTRACT_VERSION,
     installerVersion: INSTALLER_VERSION,
     apiBaseUrl: requireHttpsUrl(apiBaseUrl, "Visual Standard service URL").href.replace(/\/$/, ""),
+    productCode,
     releaseChannel,
     privateEntrypoint: stored.privateEntrypoint,
     keyringFile: resolve(keyringFile),

@@ -1,6 +1,6 @@
 import { createPublicKey, timingSafeEqual, verify as verifySignature } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { CONTRACT_VERSION, MAX_OFFLINE_SECONDS } from "./config.mjs";
+import { CLOCK_SKEW_SECONDS, CONTRACT_VERSION, MAX_OFFLINE_SECONDS } from "./config.mjs";
 
 const decode = (segment) => {
   if (typeof segment !== "string" || !/^[A-Za-z0-9_-]+$/.test(segment)) throw new Error("The authorization token is malformed.");
@@ -44,10 +44,15 @@ const sameText = (left, right) => {
   return a.length === b.length && timingSafeEqual(a, b);
 };
 
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const installationId = /^[A-Za-z0-9_-]{22,128}$/;
+const identifier = /^[a-z0-9][a-z0-9._-]{0,63}$/;
+
 export const verifyEntitlement = (token, {
   keyring,
   expectedChannel,
-  expectedDeviceId,
+  expectedInstallationId,
+  expectedProductCode,
   now = Math.floor(Date.now() / 1000),
 }) => {
   if (typeof token !== "string" || token.length > 16_384) throw new Error("The authorization token is invalid.");
@@ -55,7 +60,7 @@ export const verifyEntitlement = (token, {
   if (segments.length !== 3) throw new Error("The authorization token is malformed.");
   const header = parseObject(segments[0]);
   const payload = parseObject(segments[1]);
-  if (!exactKeys(header, ["alg", "kid"]) || !exactKeys(payload, ["licenseId", "deviceId", "channel", "issuedAt", "expiresAt", "contractVersion"])) {
+  if (!exactKeys(header, ["alg", "kid"]) || !exactKeys(payload, ["licenseId", "deviceId", "installationId", "channel", "productCode", "issuedAt", "expiresAt", "contractVersion"])) {
     throw new Error("The authorization token contains unsupported fields.");
   }
   const key = keyring.keys.find((candidate) => candidate.kid === header.kid && candidate.alg === "Ed25519");
@@ -73,13 +78,23 @@ export const verifyEntitlement = (token, {
     payload.contractVersion !== CONTRACT_VERSION
     || !Number.isSafeInteger(payload.issuedAt)
     || !Number.isSafeInteger(payload.expiresAt)
-    || payload.issuedAt > now
-    || payload.expiresAt <= now
     || payload.expiresAt - payload.issuedAt > MAX_OFFLINE_SECONDS
+    || !uuid.test(payload.licenseId)
+    || !uuid.test(payload.deviceId)
+    || !installationId.test(payload.installationId)
+    || !identifier.test(payload.channel)
+    || !identifier.test(payload.productCode)
     || !sameText(payload.channel, expectedChannel)
-    || !sameText(payload.deviceId, expectedDeviceId)
+    || !sameText(payload.installationId, expectedInstallationId)
+    || !sameText(payload.productCode, expectedProductCode)
   ) {
     throw new Error("The authorization token is not valid for this installation.");
+  }
+  if (payload.issuedAt > now + CLOCK_SKEW_SECONDS) {
+    throw new Error("The Mac clock is not synchronized. Enable automatic date and time, then try again.");
+  }
+  if (payload.expiresAt <= now - CLOCK_SKEW_SECONDS) {
+    throw new Error("The authorization token has expired. Enter the license key again.");
   }
   return payload;
 };

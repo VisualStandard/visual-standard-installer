@@ -2,6 +2,7 @@
   "contractVersion": 1,
   "installerVersion": "1.0.7",
   "apiBaseUrl": "https://visualstandard.io",
+  "productCode": "motion_graphics_creator",
   "releaseChannel": "stable",
   "privateEntrypoint": "package/installer-entry.mjs"
 }
