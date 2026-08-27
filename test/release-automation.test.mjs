@@ -95,5 +95,5 @@ test("release workflows separate immutable publish, dist-tag promotion and GitHu
 
   assert.doesNotMatch(release, /npm publish|npm dist-tag|NPM_DIST_TAG_TOKEN|id-token:\s*write/);
   assert.match(release, /gh release create/);
-  assert.match(release, /RELEASE_COMMIT: 78d8493a5b6d3629607cbbe801c5ed39e618415d/);
+  assert.match(release, /RELEASE_COMMIT: fb0871d169daa24d7ea9c3b339bd5c6f0f8f70ab/);
 });
