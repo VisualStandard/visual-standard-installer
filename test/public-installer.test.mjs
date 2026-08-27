@@ -270,7 +270,7 @@ test("normal Mac and service clock skew does not block installation", async () =
 test("the npm patch keeps the audited stable installer protocol boundary", () => {
   const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   const config = loadConfig();
-  assert.equal(manifest.version, "1.0.13");
+  assert.equal(manifest.version, "1.0.14");
   assert.equal(config.installerVersion, "1.0.7");
   assert.equal(config.apiBaseUrl, "https://visualstandard.io");
   assert.equal(config.productCode, productCode);
@@ -488,7 +488,7 @@ test("public repository and packed npm archive contain no retired identity, secr
   const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   assert.equal(manifest.files.includes("CHECKSUMS.sha256"), false);
   assert.equal(metadata.files.some((file) => file.path === "CHECKSUMS.sha256"), false);
-  assert.equal(manifest.version, "1.0.13");
+  assert.equal(manifest.version, "1.0.14");
   assert.equal(manifest.homepage, "https://visualstandard.io");
   assert.equal(manifest.repository.url, "git+https://github.com/VisualStandard/visual-standard-installer.git");
   assert.equal(manifest.documentation, "https://github.com/VisualStandard/visual-standard-installer/tree/main/docs");
