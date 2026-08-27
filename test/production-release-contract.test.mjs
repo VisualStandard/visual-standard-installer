@@ -29,9 +29,9 @@ const productionKeyring = () => {
   };
 };
 
-test("installer 1.0.13 accepts only the coordinated stable production contract", () => {
+test("installer 1.0.14 accepts only the coordinated stable production contract", () => {
   const result = validateProductionReleaseContract({ manifest, config, keyring: productionKeyring() });
-  assert.equal(result.packageVersion, "1.0.13");
+  assert.equal(result.packageVersion, "1.0.14");
   assert.equal(result.kid, "prod-2026-08-v2");
   assert.match(result.publicKeySpkiSha256, /^[a-f0-9]{64}$/);
 });

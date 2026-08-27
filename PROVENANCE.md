@@ -1,12 +1,15 @@
 # Package provenance
 
-## Release 1.0.13
+## Release 1.0.14
 
-Version 1.0.13 is the production installer candidate for the official
-`https://visualstandard.io` service. It is published only as npm `latest`, after
-the production backend and private authorized release pass the clean-Mac test.
+Version 1.0.14 is the production installer wrapper for private runtime 1.0.13 on
+the official `https://visualstandard.io` service. Its installer behavior, stable
+contract, public entitlement keyring, and runtime protocol are unchanged from
+the audited 1.0.13 wrapper. The release-only delta is package identity,
+documentation, checksum, and the OIDC workflow that publishes once directly to
+npm `latest` after operator approval.
 
-The npm package patch version is `1.0.13`. Its private-release compatibility
+The npm package patch version is `1.0.14`. Its private-release compatibility
 capability remains installer protocol `1.0.7`; documentation and
 workflow-only patches do not raise the minimum compatible private installer version.
 
