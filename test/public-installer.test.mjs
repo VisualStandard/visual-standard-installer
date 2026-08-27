@@ -483,8 +483,11 @@ test("public repository and packed npm archive contain no retired identity, secr
     assert.equal(contents.stdout.toLowerCase().includes(value.toLowerCase()), false);
   }
   assert.doesNotMatch(listing.stdout, /runtime|buyer-agent|reference|prompts|entitlement\.json/i);
+  assert.doesNotMatch(listing.stdout, /package\/CHECKSUMS\.sha256/);
   assert.doesNotMatch(contents.stdout, /BEGIN (?:OPENSSH |RSA |EC |ENCRYPTED )?PRIVATE KEY|sk_live_|sk_test_|whsec_|SUPABASE_SERVICE_ROLE|STRIPE_SECRET_KEY|VS1-[A-Z0-9]{12,}/i);
   const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  assert.equal(manifest.files.includes("CHECKSUMS.sha256"), false);
+  assert.equal(metadata.files.some((file) => file.path === "CHECKSUMS.sha256"), false);
   assert.equal(manifest.version, "1.0.12");
   assert.equal(manifest.homepage, "https://visualstandard.io");
   assert.equal(manifest.repository.url, "git+https://github.com/VisualStandard/visual-standard-installer.git");
