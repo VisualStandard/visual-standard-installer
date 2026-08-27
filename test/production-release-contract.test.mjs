@@ -36,8 +36,23 @@ test("installer 1.0.12 accepts only the coordinated stable production contract",
   assert.match(result.publicKeySpkiSha256, /^[a-f0-9]{64}$/);
 });
 
-test("release preflight rejects the distributed TEST keyring until signing alignment", () => {
-  const testKeyring = JSON.parse(readFileSync("entitlement-public-keys.json", "utf8"));
+test("release preflight accepts the distributed production keyring", () => {
+  const keyring = JSON.parse(readFileSync("entitlement-public-keys.json", "utf8"));
+  const result = validateProductionReleaseContract({ manifest, config, keyring });
+  assert.equal(result.kid, "prod-2026-08-v1");
+  assert.equal(result.publicKeySpkiSha256, "3321a43f4d06572f308b8c8bc4bc3ef08af3d5d600f6f0fabe240fbc4e08e1e4");
+});
+
+test("release preflight still rejects a TEST keyring", () => {
+  const { publicKey } = generateKeyPairSync("ed25519");
+  const testKeyring = {
+    contractVersion: 1,
+    keys: [{
+      kid: "test-ed25519-v1",
+      alg: "Ed25519",
+      publicKeySpkiBase64: publicKey.export({ format: "der", type: "spki" }).toString("base64"),
+    }],
+  };
   assert.throws(
     () => validateProductionReleaseContract({ manifest, config, keyring: testKeyring }),
     /non-production channel/i,
